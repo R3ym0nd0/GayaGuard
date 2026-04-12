@@ -1,9 +1,6 @@
-/* ========================================
-   BARANGAY GAYA GAYA - MAIN JAVASCRIPT
-   ======================================== */
+
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all components when DOM is fully loaded
     initNavbar();
     initMobileMenu();
     initScrollSpy();
@@ -12,9 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('BARANGAY GAYA GAYA System UI Initialized ✅');
 });
 
-/**
- * Initialize Navbar scroll behavior
- */
+
 function initNavbar() {
     const navbar = document.getElementById('navbar');
     
@@ -27,9 +22,7 @@ function initNavbar() {
     });
 }
 
-/**
- * Initialize Mobile Hamburger Menu
- */
+
 function initMobileMenu() {
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const navMenu = document.getElementById('navMenu');
@@ -75,9 +68,7 @@ function initMobileMenu() {
     });
 }
 
-/**
- * Initialize Scroll Spy for navigation
- */
+
 function initScrollSpy() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -107,9 +98,7 @@ function initScrollSpy() {
     updateActiveLink();
 }
 
-/**
- * Initialize smooth scroll for anchor links
- */
+
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -119,7 +108,7 @@ function initSmoothScroll() {
             const targetElement = document.querySelector(targetId);
             
             if (targetElement) {
-                const offsetTop = targetElement.offsetTop - 72; // Account for navbar height
+                const offsetTop = targetElement.offsetTop - 72;
                 window.scrollTo({
                     top: offsetTop,
                     behavior: 'smooth'
@@ -129,9 +118,7 @@ function initSmoothScroll() {
     });
 }
 
-/**
- * Add subtle entrance animations on scroll
- */
+
 function initScrollAnimations() {
     if (
         window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
@@ -179,3 +166,4 @@ function initScrollAnimations() {
         observer.observe(element);
     });
 }
+
