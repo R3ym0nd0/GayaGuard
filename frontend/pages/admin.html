@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | BARANGAY Gaya Gaya</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="../assets/images/icon.png" alt="Barangay Logo">
+                <span>Barangay Gaya Gaya</span>
+            </div>
+            <button class="hamburger admin-hamburger sidebar-toggle" id="sidebarToggle" aria-label="Toggle admin menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="#" class="sidebar-link active">
+                <i class="fas fa-gauge-high"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-file-lines"></i>
+                <span>Requests</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-list-check"></i>
+                <span>Review Queue</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-archive"></i>
+                <span>Records</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-gear"></i>
+                <span>Settings</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            
+            <!-- Admin Profile in Sidebar -->
+            <div class="sidebar-profile">
+                <div class="sidebar-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="sidebar-profile-info">
+                    <div class="sidebar-profile-name">Admin User</div>
+                    <div class="sidebar-profile-role">Barangay Staff</div>
+                </div>
+            </div>
+
+            <a href="#" class="sidebar-link sidebar-logout">
+                <i class="fas fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="admin-header-mobile">
+                    <button class="hamburger admin-hamburger admin-header-menu" id="mobileMenuBtn" aria-label="Toggle admin menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="admin-header-mobile-text">
+                        <span class="admin-header-mobile-title">Admin Dashboard</span>
+                        <span class="admin-header-mobile-subtitle">Barangay Staff</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="admin-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">128</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-pending">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">35</div>
+                        <div class="stat-label">Pending Requests</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-approved">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">54</div>
+                        <div class="stat-label">Approved Requests</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-rejected">
+                    <div class="stat-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">16</div>
+                        <div class="stat-label">Rejected Requests</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-review">
+                    <div class="stat-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Needs Review</div>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-bar">
+                <select class="filter-select">
+                    <option value="">All Requests</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="review">Needs Review</option>
+                </select>
+
+                <select class="filter-select">
+                    <option value="">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="high-score">Highest Screening Score</option>
+                    <option value="low-score">Lowest Screening Score</option>
+                </select>
+
+                <div class="filter-spacer"></div>
+
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Export Records
+                </button>
+            </div>
+            <div class="dashboard-grid">
+                <div class="table-panel">
+                    <div class="panel-header">
+                        <h3>Recent Requests</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="request-table">
+                            <thead>
+                                <tr>
+                                    <th>Resident Name</th>
+                                    <th>Request Type</th>
+                                    <th>Date Submitted</th>
+                                    <th>Screening Status</th>
+                                    <th>Final Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Juan Dela Cruz</td>
+                                    <td>Barangay Clearance</td>
+                                    <td>Apr 10, 2026</td>
+                                    <td><span class="status-badge status-low">Low Concern</span></td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Maria Santos</td>
+                                    <td>Certificate of Indigency</td>
+                                    <td>Apr 09, 2026</td>
+                                    <td><span class="status-badge status-review">Needs Review</span></td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Pedro Reyes</td>
+                                    <td>Complaint Submission</td>
+                                    <td>Apr 08, 2026</td>
+                                    <td><span class="status-badge status-high">High Concern</span></td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Ana Mendoza</td>
+                                    <td>Excuse Letter</td>
+                                    <td>Apr 07, 2026</td>
+                                    <td><span class="status-badge status-low">Low Concern</span></td>
+                                    <td><span class="status-badge status-approved">Approved</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="request-preview-modal" id="requestPreviewModal">
+        <div class="modal-header">
+            <h3>Request Review Preview</h3>
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="request-preview">
+            <div class="preview-row">
+                <div class="preview-label">Resident Name</div>
+                <div class="preview-value">Maria Santos</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Request Type</div>
+                <div class="preview-value">Certificate of Indigency</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Date Needed</div>
+                <div class="preview-value">April 15, 2026</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Purpose</div>
+                <div class="preview-value">Medical assistance application for family member</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Screening Score</div>
+                <div class="preview-value">68 / 100</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Screening Notes</div>
+                <div class="preview-value">
+                    <ul class="notes-list">
+                        <li>Incomplete explanation provided</li>
+                        <li>Requires supporting document verification</li>
+                        <li>Needs barangay staff review</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="preview-actions">
+                <button class="btn btn-success">Approve</button>
+                <button class="btn btn-danger">Reject</button>
+                <button class="btn btn-secondary">Mark for Review</button>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/admin.js"></script>
+</body>
+</html>

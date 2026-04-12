@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Request | BARANGAY GAYA GAYA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <nav id="navbar" class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="../assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="logo-image">
+                <span class="logo-text">Barangay Gaya Gaya</span>
+            </div>
+
+            <div class="nav-menu" id="navMenu">
+                <div class="nav-menu-header">
+                    <img src="../assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="nav-menu-logo">
+                    <div class="nav-menu-copy">
+                        <span class="nav-menu-eyebrow">Navigation</span>
+                        <strong>Barangay Gaya Gaya</strong>
+                    </div>
+                </div>
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../index.html#about" class="nav-link">About</a>
+                <a href="../index.html#services" class="nav-link">Services</a>
+                <a href="../index.html#process" class="nav-link">Process</a>
+                <a href="../index.html#contact" class="nav-link">Location</a>
+                <a href="signup.html" class="btn btn-secondary signup-mobile">Sign Up</a>
+                <a href="login.html" class="btn btn-primary login-mobile">Login</a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="signup.html" class="btn btn-secondary signup-desktop">Sign Up</a>
+                <a href="login.html" class="btn btn-primary login-desktop">Login</a>
+                <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-card">
+                    <div class="request-page-header request-page-header-inside">
+                        <h1>Submit a Request</h1>
+                        <p>Please complete the form below to send your request to Barangay Gaya Gaya.</p>
+                    </div>
+
+                    <form id="requestForm" class="request-form">
+                        
+                        <!-- Personal Information -->
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" placeholder="Enter your complete full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Complete Address</label>
+                            <input type="text" class="form-input" placeholder="House No., Street, Purok, Barangay Gaya Gaya" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="tel" class="form-input" placeholder="Your mobile or telephone number" required>
+                        </div>
+
+                        <!-- Request Details -->
+                        <div class="form-group">
+                            <label class="form-label">Type of Request</label>
+                            <select class="form-input" required>
+                                <option value="" disabled selected>Select request type</option>
+                                <option value="clearance">Barangay Clearance</option>
+                                <option value="indigency">Certificate of Indigency</option>
+                                <option value="letter">Excuse / Supporting Letter</option>
+                                <option value="complaint">Complaint Submission</option>
+                                <option value="other">Other Request</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date Needed</label>
+                            <input type="date" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Purpose / Reason for Request</label>
+                            <textarea class="form-input form-textarea" placeholder="Provide a clear explanation for your request" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes <span class="optional-text">(Optional)</span></label>
+                            <textarea class="form-input form-textarea" placeholder="Any additional information you want to include" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Supporting Document <span class="optional-text">(Optional)</span></label>
+                            <div class="file-upload-area">
+                                <div class="file-upload-inner">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click or drag file to upload</p>
+                                    <small>PDF, JPG, PNG up to 5MB</small>
+                                </div>
+                                <input type="file" class="file-input" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-eraser"></i> Clear Form
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==================== FOOTER SECTION ==================== -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <span class="footer-eyebrow">Digital Public Service Portal</span>
+                    <div class="footer-logo">
+                        <span>Barangay Gaya Gaya</span>
+                    </div>
+                    <p class="footer-summary">Request Screening and Monitoring System for faster, clearer, and more organized barangay services.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="../index.html">Home</a>
+                    <a href="../index.html#about">About</a>
+                    <a href="../index.html#services">Services</a>
+                    <a href="../index.html#process">Process</a>
+                    <a href="../index.html#contact">Location</a>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contact Information</h4>
+                    <p><i class="fas fa-location-dot"></i><span>Barangay Hall, Gaya Gaya</span></p>
+                    <p><i class="fas fa-phone"></i><span>+63 9XX XXXX XXX</span></p>
+                    <p><i class="fas fa-envelope"></i><span>barangay.gayagaya@email.gov.ph</span></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Barangay Gaya Gaya. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
