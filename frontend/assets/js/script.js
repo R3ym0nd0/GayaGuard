@@ -1,4 +1,23 @@
 
+function getConfiguredApiOrigin() {
+    const configuredOrigin = window.GAYAGUARD_CONFIG && window.GAYAGUARD_CONFIG.API_ORIGIN
+        ? String(window.GAYAGUARD_CONFIG.API_ORIGIN).trim()
+        : 'http://localhost:5000';
+
+    return configuredOrigin.replace(/\/+$/, '');
+}
+
+function getConfiguredApiBaseUrl() {
+    return `${getConfiguredApiOrigin()}/api`;
+}
+
+function getConfiguredUploadsBaseUrl() {
+    return `${getConfiguredApiOrigin()}/uploads`;
+}
+
+window.getApiOrigin = getConfiguredApiOrigin;
+window.getApiBaseUrl = getConfiguredApiBaseUrl;
+window.getUploadsBaseUrl = getConfiguredUploadsBaseUrl;
 
 document.addEventListener('DOMContentLoaded', function() {
     initNavbar();
@@ -8,32 +27,19 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollAnimations();
     initAdminSidebar();
     initRequestModal();
-    console.log('BARANGAY GAYA GAYA System UI Initialized ✅');
+    console.log('GayaGuard UI Initialized ✅');
 });
 
-/**
- * Initialize Admin Sidebar Toggle
- */
 function initAdminSidebar() {
     const sidebar = document.getElementById('adminSidebar');
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
 
     if (sidebar && mobileMenuBtn && sidebarOverlay) {
-        function toggleSidebar() {
-            sidebar.classList.toggle('active');
-            sidebarOverlay.classList.toggle('active');
-            document.body.classList.toggle('sidebar-open');
-        }
-
-        mobileMenuBtn.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', toggleSidebar);
+        return;
     }
 }
 
-/**
- * Request Preview Modal Toggle
- */
 function initRequestModal() {
     const modal = document.getElementById('requestPreviewModal');
     const modalOverlay = document.getElementById('modalOverlay');
@@ -74,6 +80,10 @@ function initRequestModal() {
 
 function initNavbar() {
     const navbar = document.getElementById('navbar');
+
+    if (!navbar) {
+        return;
+    }
     
     window.addEventListener('scroll', function() {
         if (window.scrollY > 50) {
@@ -90,6 +100,10 @@ function initMobileMenu() {
     const navMenu = document.getElementById('navMenu');
     const navOverlay = document.getElementById('navOverlay');
     const navLinks = document.querySelectorAll('.nav-link');
+
+    if (!hamburgerBtn || !navMenu) {
+        return;
+    }
 
     function setMenuState(isOpen) {
         navMenu.classList.toggle('active', isOpen);
@@ -135,6 +149,10 @@ function initScrollSpy() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
 
+    if (!sections.length || !navLinks.length) {
+        return;
+    }
+
     function updateActiveLink() {
         let current = '';
         const scrollPosition = window.scrollY + 100;
@@ -162,11 +180,21 @@ function initScrollSpy() {
 
 
 function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    const anchors = document.querySelectorAll('a[href^="#"]');
+
+    if (!anchors.length) {
+        return;
+    }
+
+    anchors.forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            
             const targetId = this.getAttribute('href');
+
+            if (!targetId || targetId === '#') {
+                return;
+            }
+
+            e.preventDefault();
             const targetElement = document.querySelector(targetId);
             
             if (targetElement) {
@@ -228,4 +256,3 @@ function initScrollAnimations() {
         observer.observe(element);
     });
 }
-

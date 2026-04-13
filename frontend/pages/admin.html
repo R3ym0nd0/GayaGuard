@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | BARANGAY Gaya Gaya</title>
+    <title>GayaGuard - Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
-<body>
+<body data-page="admin" class="auth-pending">
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
             <div class="sidebar-logo">
                 <img src="../assets/images/icon.png" alt="Barangay Logo">
-                <span>Barangay Gaya Gaya</span>
+                <span>GayaGuard</span>
             </div>
             <button class="hamburger admin-hamburger sidebar-toggle" id="sidebarToggle" aria-label="Toggle admin menu">
                 <span></span>
@@ -25,40 +25,39 @@
         </div>
 
         <nav class="sidebar-menu">
-            <a href="#" class="sidebar-link active">
+            <a href="#dashboard" class="sidebar-link active" data-admin-view-link="dashboard">
                 <i class="fas fa-gauge-high"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#" class="sidebar-link">
+            <a href="#requests" class="sidebar-link" data-admin-view-link="requests">
                 <i class="fas fa-file-lines"></i>
                 <span>Requests</span>
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="fas fa-list-check"></i>
-                <span>Review Queue</span>
-            </a>
-            <a href="#" class="sidebar-link">
+            <a href="#records" class="sidebar-link" data-admin-view-link="records">
                 <i class="fas fa-archive"></i>
                 <span>Records</span>
             </a>
-            <a href="#" class="sidebar-link">
-                <i class="fas fa-gear"></i>
-                <span>Settings</span>
+            <a href="#residents" class="sidebar-link" data-admin-view-link="residents">
+                <i class="fas fa-users"></i>
+                <span>Residents</span>
+            </a>
+            <a href="#reports" class="sidebar-link" data-admin-view-link="reports">
+                <i class="fas fa-chart-column"></i>
+                <span>Reports</span>
             </a>
             <div class="sidebar-divider"></div>
             
-            <!-- Admin Profile in Sidebar -->
             <div class="sidebar-profile">
                 <div class="sidebar-avatar">
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="sidebar-profile-info">
-                    <div class="sidebar-profile-name">Admin User</div>
-                    <div class="sidebar-profile-role">Barangay Staff</div>
+                    <div class="sidebar-profile-name" id="adminProfileName">Admin User</div>
+                    <div class="sidebar-profile-role" id="adminProfileRole">Barangay Staff</div>
                 </div>
             </div>
 
-            <a href="#" class="sidebar-link sidebar-logout">
+            <a href="#" class="sidebar-link sidebar-logout" id="logoutBtn">
                 <i class="fas fa-right-from-bracket"></i>
                 <span>Logout</span>
             </a>
@@ -74,136 +73,395 @@
                         <span></span>
                     </button>
                     <div class="admin-header-mobile-text">
-                        <span class="admin-header-mobile-title">Admin Dashboard</span>
-                        <span class="admin-header-mobile-subtitle">Barangay Staff</span>
+                        <span class="admin-header-mobile-title">GayaGuard Admin</span>
+                        <span class="admin-header-mobile-subtitle" id="adminHeaderSubtitle">Dashboard</span>
                     </div>
                 </div>
             </div>
         </header>
         <div class="admin-content">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-file-alt"></i>
+            <section class="admin-view admin-view-active" data-admin-view="dashboard">
+                <div class="admin-overview-hero">
+                    <div class="admin-overview-copy">
+                        <span class="admin-overview-eyebrow">Operations Overview</span>
+                        <h1>Request Monitoring Center</h1>
+                        <p id="adminOverviewText">Track live request volume, review priorities, and recent resident activity from one place.</p>
                     </div>
-                    <div class="stat-content">
-                        <div class="stat-value">128</div>
-                        <div class="stat-label">Total Requests</div>
-                    </div>
-                </div>
-
-                <div class="stat-card stat-pending">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">35</div>
-                        <div class="stat-label">Pending Requests</div>
+                    <div class="admin-overview-actions">
+                        <button type="button" class="btn btn-primary" data-admin-action="requests">
+                            <i class="fas fa-file-lines"></i> View Requests
+                        </button>
                     </div>
                 </div>
 
-                <div class="stat-card stat-approved">
-                    <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statTotalRequests">0</div>
+                            <div class="stat-label">Total Requests</div>
+                        </div>
                     </div>
-                    <div class="stat-content">
-                        <div class="stat-value">54</div>
-                        <div class="stat-label">Approved Requests</div>
+
+                    <div class="stat-card stat-pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statPendingRequests">0</div>
+                            <div class="stat-label">Pending Requests</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-approved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statApprovedRequests">0</div>
+                            <div class="stat-label">Approved Requests</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-rejected">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statRejectedRequests">0</div>
+                            <div class="stat-label">Rejected Requests</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-review">
+                        <div class="stat-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statNeedsReview">0</div>
+                            <div class="stat-label">Needs Review</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="stat-card stat-rejected">
-                    <div class="stat-icon">
-                        <i class="fas fa-times-circle"></i>
+                <div class="admin-dashboard-panels">
+                    <div class="admin-dashboard-panel">
+                        <div class="admin-dashboard-panel-header">
+                            <div class="admin-dashboard-panel-title">
+                                <span class="admin-dashboard-panel-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </span>
+                                <h3>Quick Summary</h3>
+                            </div>
+                            <span>Live overview</span>
+                        </div>
+                        <div class="admin-summary-grid">
+                            <div class="admin-summary-item">
+                                <span class="admin-summary-label">Most Recent Request</span>
+                                <strong id="adminRecentRequestType">No requests yet</strong>
+                            </div>
+                            <div class="admin-summary-item">
+                                <span class="admin-summary-label">Latest Resident</span>
+                                <strong id="adminRecentResidentName">No activity yet</strong>
+                            </div>
+                            <div class="admin-summary-item">
+                                <span class="admin-summary-label">Latest Final Status</span>
+                                <strong id="adminLatestFinalStatus">No updates yet</strong>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-content">
-                        <div class="stat-value">16</div>
-                        <div class="stat-label">Rejected Requests</div>
+
+                    <div class="admin-dashboard-panel admin-dashboard-panel-note">
+                        <div class="admin-dashboard-panel-header">
+                            <div class="admin-dashboard-panel-title">
+                                <span class="admin-dashboard-panel-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </span>
+                                <h3>What To Focus On</h3>
+                            </div>
+                            <span>Admin workflow</span>
+                        </div>
+                        <ul class="admin-dashboard-note-list">
+                            <li>
+                                <span class="admin-dashboard-note-icon"><i class="fas fa-search"></i></span>
+                                <div>
+                                    <strong>Prioritize items that need review</strong>
+                                    <span>Focus first on requests that still require screening and final action.</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="admin-dashboard-note-icon"><i class="fas fa-check-circle"></i></span>
+                                <div>
+                                    <strong>Keep approval decisions moving</strong>
+                                    <span>Open the Requests section to process records quickly and consistently.</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="admin-dashboard-note-icon"><i class="fas fa-folder-open"></i></span>
+                                <div>
+                                    <strong>Maintain organized request records</strong>
+                                    <span>Regularly review the request list to avoid backlog growth.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-view" data-admin-view="requests">
+                <div class="admin-overview-hero admin-requests-hero">
+                    <div class="admin-overview-copy">
+                        <span class="admin-overview-eyebrow">Request Management</span>
+                        <h1>Requests</h1>
+                        <p>Review active request records that are still pending screening, under review, or waiting for a final decision.</p>
                     </div>
                 </div>
 
-                <div class="stat-card stat-review">
-                    <div class="stat-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">23</div>
-                        <div class="stat-label">Needs Review</div>
+                <div class="filter-bar">
+                    <select class="filter-select" id="adminRequestStatusFilter">
+                        <option value="">All Active Requests</option>
+                        <option value="pending">Pending</option>
+                        <option value="pending_screening">Pending Screening</option>
+                        <option value="needs_review">Needs Review</option>
+                        <option value="low_concern">Low Concern</option>
+                        <option value="high_concern">High Concern</option>
+                    </select>
+
+                    <select class="filter-select" id="adminRequestSortFilter">
+                        <option value="">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="high-score">Highest Screening Score</option>
+                        <option value="low-score">Lowest Screening Score</option>
+                    </select>
+
+                    <div class="filter-spacer"></div>
+
+                    <button class="btn btn-secondary" id="exportRecordsBtn" type="button">
+                        <i class="fas fa-download"></i> Export Records
+                    </button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="table-panel">
+                        <div class="panel-header">
+                            <h3>Active Requests</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="request-table">
+                                <thead>
+                                    <tr>
+                                        <th>Resident Name</th>
+                                        <th>Request Type</th>
+                                        <th>Date Submitted</th>
+                                        <th>Screening Status</th>
+                                        <th>Final Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allRequestsBody">
+                                    <tr>
+                                        <td colspan="5">Loading requests...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="filter-bar">
-                <select class="filter-select">
-                    <option value="">All Requests</option>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="review">Needs Review</option>
-                </select>
+            </section>
 
-                <select class="filter-select">
-                    <option value="">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="high-score">Highest Screening Score</option>
-                    <option value="low-score">Lowest Screening Score</option>
-                </select>
-
-                <div class="filter-spacer"></div>
-
-                <button class="btn btn-secondary">
-                    <i class="fas fa-download"></i> Export Records
-                </button>
-            </div>
-            <div class="dashboard-grid">
-                <div class="table-panel">
-                    <div class="panel-header">
-                        <h3>Recent Requests</h3>
-                    </div>
-                    <div class="table-container">
-                        <table class="request-table">
-                            <thead>
-                                <tr>
-                                    <th>Resident Name</th>
-                                    <th>Request Type</th>
-                                    <th>Date Submitted</th>
-                                    <th>Screening Status</th>
-                                    <th>Final Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Juan Dela Cruz</td>
-                                    <td>Barangay Clearance</td>
-                                    <td>Apr 10, 2026</td>
-                                    <td><span class="status-badge status-low">Low Concern</span></td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Maria Santos</td>
-                                    <td>Certificate of Indigency</td>
-                                    <td>Apr 09, 2026</td>
-                                    <td><span class="status-badge status-review">Needs Review</span></td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Pedro Reyes</td>
-                                    <td>Complaint Submission</td>
-                                    <td>Apr 08, 2026</td>
-                                    <td><span class="status-badge status-high">High Concern</span></td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Ana Mendoza</td>
-                                    <td>Excuse Letter</td>
-                                    <td>Apr 07, 2026</td>
-                                    <td><span class="status-badge status-low">Low Concern</span></td>
-                                    <td><span class="status-badge status-approved">Approved</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <section class="admin-view" data-admin-view="records">
+                <div class="admin-overview-hero admin-requests-hero">
+                    <div class="admin-overview-copy">
+                        <span class="admin-overview-eyebrow">Archived Decisions</span>
+                        <h1>Records</h1>
+                        <p>Browse approved and rejected requests that already have a final decision on file.</p>
                     </div>
                 </div>
-            </div>
+
+                <div class="dashboard-grid">
+                    <div class="table-panel">
+                        <div class="panel-header">
+                            <h3>Approved and Rejected Records</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="request-table">
+                                <thead>
+                                    <tr>
+                                        <th>Resident Name</th>
+                                        <th>Request Type</th>
+                                        <th>Date Submitted</th>
+                                        <th>Screening Status</th>
+                                        <th>Final Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recordsBody">
+                                    <tr>
+                                        <td colspan="5">Loading records...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-view" data-admin-view="residents">
+                <div class="admin-overview-hero admin-requests-hero">
+                    <div class="admin-overview-copy">
+                        <span class="admin-overview-eyebrow">Resident Accounts</span>
+                        <h1>Residents</h1>
+                        <p>View registered resident accounts, check their request activity, and monitor who is actively using the system.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="table-panel">
+                        <div class="panel-header">
+                            <h3>Registered Residents</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="request-table residents-table">
+                                <thead>
+                                    <tr>
+                                        <th>Resident Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Total Requests</th>
+                                        <th>Latest Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="residentsBody">
+                                    <tr>
+                                        <td colspan="5">Loading residents...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-view" data-admin-view="reports">
+                <div class="admin-overview-hero admin-requests-hero">
+                    <div class="admin-overview-copy">
+                        <span class="admin-overview-eyebrow">Analytics Overview</span>
+                        <h1>Reports</h1>
+                        <p>Review system activity, request breakdowns, and current request patterns from a cleaner summary view.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid reports-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-days"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="reportTotalThisMonth">0</div>
+                            <div class="stat-label">Requests This Month</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-approved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="reportApprovedThisMonth">0</div>
+                            <div class="stat-label">Approved This Month</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-rejected">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="reportRejectedThisMonth">0</div>
+                            <div class="stat-label">Rejected This Month</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="reportPendingThisMonth">0</div>
+                            <div class="stat-label">Pending This Month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-dashboard-panels reports-panels">
+                    <div class="admin-dashboard-panel">
+                        <div class="admin-dashboard-panel-header">
+                            <div class="admin-dashboard-panel-title">
+                                <span class="admin-dashboard-panel-icon">
+                                    <i class="fas fa-file-lines"></i>
+                                </span>
+                                <h3>Request Type Breakdown</h3>
+                            </div>
+                            <span>Most requested services</span>
+                        </div>
+                        <div class="report-breakdown-list" id="reportTypeBreakdown">
+                            <div class="report-breakdown-empty">Loading request type analytics...</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-dashboard-panel">
+                        <div class="admin-dashboard-panel-header">
+                            <div class="admin-dashboard-panel-title">
+                                <span class="admin-dashboard-panel-icon">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                <h3>Top Active Residents</h3>
+                            </div>
+                            <span>Most request activity</span>
+                        </div>
+                        <div class="report-breakdown-list" id="reportTopResidents">
+                            <div class="report-breakdown-empty">Loading resident activity...</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-dashboard-panel">
+                        <div class="admin-dashboard-panel-header">
+                            <div class="admin-dashboard-panel-title">
+                                <span class="admin-dashboard-panel-icon">
+                                    <i class="fas fa-shield-heart"></i>
+                                </span>
+                                <h3>Screening Breakdown</h3>
+                            </div>
+                            <span>Current screening mix</span>
+                        </div>
+                        <div class="report-breakdown-list" id="reportScreeningBreakdown">
+                            <div class="report-breakdown-empty">Loading screening analytics...</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-dashboard-panel admin-dashboard-panel-note">
+                        <div class="admin-dashboard-panel-header">
+                            <div class="admin-dashboard-panel-title">
+                                <span class="admin-dashboard-panel-icon">
+                                    <i class="fas fa-clock-rotate-left"></i>
+                                </span>
+                                <h3>Recent Decisions</h3>
+                            </div>
+                            <span>Latest resolved records</span>
+                        </div>
+                        <ul class="admin-dashboard-note-list" id="reportRecentDecisions">
+                            <li>
+                                <span class="admin-dashboard-note-icon"><i class="fas fa-clock"></i></span>
+                                <div>
+                                    <strong>Loading recent decisions...</strong>
+                                    <span>Preparing latest approval and rejection activity.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -218,43 +476,55 @@
         <div class="request-preview">
             <div class="preview-row">
                 <div class="preview-label">Resident Name</div>
-                <div class="preview-value">Maria Santos</div>
+                <div class="preview-value" id="previewResidentName">No request selected</div>
             </div>
             <div class="preview-row">
                 <div class="preview-label">Request Type</div>
-                <div class="preview-value">Certificate of Indigency</div>
+                <div class="preview-value" id="previewRequestType">-</div>
             </div>
             <div class="preview-row">
                 <div class="preview-label">Date Needed</div>
-                <div class="preview-value">April 15, 2026</div>
+                <div class="preview-value" id="previewDateNeeded">-</div>
             </div>
             <div class="preview-row">
                 <div class="preview-label">Purpose</div>
-                <div class="preview-value">Medical assistance application for family member</div>
+                <div class="preview-value" id="previewPurpose">-</div>
             </div>
-            <div class="preview-row">
+            <div class="preview-row preview-row-score">
                 <div class="preview-label">Screening Score</div>
-                <div class="preview-value">68 / 100</div>
+                <div class="preview-value preview-score-value" id="previewScreeningScore">0</div>
+            </div>
+            <div class="preview-row preview-row-accent">
+                <div class="preview-label">Screening Status</div>
+                <div class="preview-value" id="previewScreeningStatus">-</div>
+            </div>
+            <div class="preview-row preview-row-accent">
+                <div class="preview-label">Screening Summary</div>
+                <div class="preview-value" id="previewScreeningSummary">No screening notes yet.</div>
             </div>
             <div class="preview-row">
-                <div class="preview-label">Screening Notes</div>
-                <div class="preview-value">
-                    <ul class="notes-list">
-                        <li>Incomplete explanation provided</li>
-                        <li>Requires supporting document verification</li>
-                        <li>Needs barangay staff review</li>
-                    </ul>
-                </div>
+                <div class="preview-label">Final Status</div>
+                <div class="preview-value" id="previewFinalStatus">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Additional Notes</div>
+                <div class="preview-value" id="previewAdditionalNotes">No additional notes provided.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Supporting Document</div>
+                <div class="preview-value" id="previewSupportingDocument">No file uploaded.</div>
             </div>
 
             <div class="preview-actions">
-                <button class="btn btn-success">Approve</button>
-                <button class="btn btn-danger">Reject</button>
-                <button class="btn btn-secondary">Mark for Review</button>
+                <button class="btn btn-success" id="approveRequestBtn">Approve</button>
+                <button class="btn btn-danger" id="rejectRequestBtn">Reject</button>
+                <button class="btn btn-secondary" id="reviewRequestBtn">Mark for Review</button>
             </div>
         </div>
     </div>
+    <script src="../assets/js/config.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/admin.js"></script>
 </body>
 </html>

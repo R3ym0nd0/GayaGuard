@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GayaGuard - Resident Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-page="my-requests" class="auth-pending">
+    <aside class="admin-sidebar resident-sidebar" id="residentSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="../assets/images/icon.png" alt="Barangay Logo">
+                <span>GayaGuard</span>
+            </div>
+            <button class="hamburger admin-hamburger sidebar-toggle" id="residentSidebarToggle" aria-label="Toggle resident menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="#dashboard" class="sidebar-link active" data-resident-view-link="dashboard">
+                <i class="fas fa-gauge-high"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#submit-request" class="sidebar-link" data-resident-view-link="submit-request">
+                <i class="fas fa-paper-plane"></i>
+                <span>Submit Request</span>
+            </a>
+            <a href="#my-requests" class="sidebar-link" data-resident-view-link="my-requests">
+                <i class="fas fa-folder-open"></i>
+                <span>My Requests</span>
+            </a>
+            <a href="#profile" class="sidebar-link" data-resident-view-link="profile">
+                <i class="fas fa-user-gear"></i>
+                <span>Profile</span>
+            </a>
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-profile resident-sidebar-profile">
+                <div class="sidebar-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="sidebar-profile-info">
+                    <div class="sidebar-profile-name" id="residentProfileName">Resident Account</div>
+                    <div class="sidebar-profile-role">Resident User</div>
+                </div>
+            </div>
+
+            <a href="#" class="sidebar-link sidebar-logout" id="residentLogoutLink">
+                <i class="fas fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="admin-main resident-main">
+        <header class="admin-header resident-header">
+            <div class="header-content">
+                <div class="admin-header-mobile">
+                    <button class="hamburger admin-hamburger admin-header-menu" id="residentMenuBtn" aria-label="Toggle resident menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="admin-header-mobile-text">
+                        <span class="admin-header-mobile-title">GayaGuard Resident</span>
+                        <span class="admin-header-mobile-subtitle" id="residentHeaderSubtitle">Dashboard</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-content resident-content">
+            <section class="resident-view resident-view-active" id="residentDashboardView" data-resident-view="dashboard">
+                <div class="resident-overview-hero">
+                    <div class="resident-overview-copy">
+                        <span class="resident-overview-eyebrow">Resident Overview</span>
+                        <h1 id="residentWelcomeTitle">Welcome back</h1>
+                        <p id="residentOverviewText">Track your current request activity and use the shortcuts below to continue your transactions.</p>
+                    </div>
+                    <div class="resident-overview-actions">
+                        <button type="button" class="btn btn-primary" data-resident-action="submit-request">
+                            <i class="fas fa-paper-plane"></i> Submit New Request
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-resident-action="my-requests">
+                            <i class="fas fa-folder-open"></i> View My Requests
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid resident-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="residentTotalRequests">0</div>
+                            <div class="stat-label">Total Requests</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-pending">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="residentPendingRequests">0</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-approved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="residentApprovedRequests">0</div>
+                            <div class="stat-label">Approved</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-rejected">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="residentRejectedRequests">0</div>
+                            <div class="stat-label">Rejected</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resident-dashboard-panels">
+                    <div class="resident-dashboard-panel resident-dashboard-panel-summary">
+                        <div class="resident-dashboard-panel-header">
+                            <div class="resident-dashboard-panel-title">
+                                <span class="resident-dashboard-panel-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </span>
+                                <h3>Quick Summary</h3>
+                            </div>
+                            <span>Current status</span>
+                        </div>
+                        <div class="resident-summary-grid">
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Most Recent Request</span>
+                                <strong id="residentRecentRequestType">No requests yet</strong>
+                            </div>
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Latest Final Status</span>
+                                <strong id="residentLatestFinalStatus">No updates yet</strong>
+                            </div>
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Latest Screening</span>
+                                <strong id="residentLatestScreeningStatus">Pending</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="resident-dashboard-panel resident-dashboard-panel-note">
+                        <div class="resident-dashboard-panel-header">
+                            <div class="resident-dashboard-panel-title">
+                                <span class="resident-dashboard-panel-icon resident-dashboard-panel-icon-gold">
+                                    <i class="fas fa-bolt"></i>
+                                </span>
+                                <h3>What You Can Do</h3>
+                            </div>
+                            <span>Resident tools</span>
+                        </div>
+                        <ul class="resident-dashboard-note-list">
+                            <li>
+                                <span class="resident-dashboard-note-icon"><i class="fas fa-paper-plane"></i></span>
+                                <div>
+                                    <strong>Submit a new request</strong>
+                                    <span>Start a new barangay transaction directly from your dashboard.</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="resident-dashboard-note-icon"><i class="fas fa-folder-open"></i></span>
+                                <div>
+                                    <strong>Track your request history</strong>
+                                    <span>Check your latest request results in the My Requests section.</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="resident-dashboard-note-icon"><i class="fas fa-circle-info"></i></span>
+                                <div>
+                                    <strong>Open full request details</strong>
+                                    <span>Tap any request card anytime to review the complete information.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="resident-view" id="residentRequestsView" data-resident-view="my-requests">
+                <div class="request-page-header request-page-header-inside resident-form-header resident-history-header">
+                    <div>
+                        <span class="resident-form-eyebrow">Request History</span>
+                        <h1>Submitted Requests</h1>
+                        <p>Review your latest request activity, open full details, and monitor status updates from one place.</p>
+                    </div>
+                </div>
+                <div class="requests-empty-state" id="myRequestsEmptyState">
+                    <i class="fas fa-folder-open"></i>
+                    <p>No requests found yet.</p>
+                    <small>Your submitted requests will appear here once they are saved.</small>
+                </div>
+                <div class="requests-list" id="myRequestsList"></div>
+            </section>
+
+            <section class="resident-view resident-form-view" id="residentSubmitRequestView" data-resident-view="submit-request">
+                <div class="request-page-header request-page-header-inside resident-form-header">
+                    <div>
+                        <span class="resident-form-eyebrow">Resident Request Portal</span>
+                        <h1>Submit a Request</h1>
+                        <p>Please complete the form below to send your request to Barangay Gaya Gaya.</p>
+                    </div>
+                </div>
+
+                <form id="requestForm" class="request-form resident-request-form">
+                    <div class="resident-form-block">
+                        <div class="resident-form-block-header">
+                            <span class="resident-form-block-step">01</span>
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Provide your basic details so the barangay can identify and contact you.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" name="fullName" maxlength="150" placeholder="Enter your complete full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Complete Address</label>
+                            <input type="text" class="form-input" name="completeAddress" maxlength="255" placeholder="House No., Street, Purok, Barangay Gaya Gaya" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="tel" class="form-input" name="contactNumber" maxlength="30" placeholder="Your mobile or telephone number" required>
+                        </div>
+                    </div>
+
+                    <div class="resident-form-block">
+                        <div class="resident-form-block-header">
+                            <span class="resident-form-block-step">02</span>
+                            <div>
+                                <h3>Request Details</h3>
+                                <p>Tell us what type of request you need and when you need it processed.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Type of Request</label>
+                            <select class="form-input" name="requestType" required>
+                                <option value="" disabled selected>Select request type</option>
+                                <option value="clearance">Barangay Clearance</option>
+                                <option value="indigency">Certificate of Indigency</option>
+                                <option value="letter">Excuse / Supporting Letter</option>
+                                <option value="complaint">Complaint Submission</option>
+                                <option value="other">Other Request</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date Needed</label>
+                            <input type="date" class="form-input" name="dateNeeded" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Purpose / Reason for Request</label>
+                            <textarea class="form-input form-textarea" name="purpose" maxlength="500" placeholder="Provide a clear explanation for your request" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes <span class="optional-text">(Optional)</span></label>
+                            <textarea class="form-input form-textarea" name="additionalNotes" maxlength="300" placeholder="Any additional information you want to include" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="resident-form-block resident-form-block-upload">
+                        <div class="resident-form-block-header">
+                            <span class="resident-form-block-step">03</span>
+                            <div>
+                                <h3>Supporting Document</h3>
+                                <p>Attach a related file if your request needs proof, reference, or supporting records.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Upload Supporting Document <span class="optional-text">(Optional)</span></label>
+                            <div class="file-upload-area">
+                                <div class="file-upload-inner">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click or drag file to upload</p>
+                                    <small>PDF, JPG, PNG up to 5MB</small>
+                                </div>
+                                <input type="file" class="file-input" id="supportingFileInput" name="supportingDocument" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            <div class="file-upload-selected" id="supportingFileSelected" aria-live="polite">
+                                <i class="fas fa-file-circle-check"></i>
+                                <span>No file selected yet.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="resident-form-actions-wrap">
+                        <div class="resident-form-actions-copy">
+                            <strong>Review your details before sending.</strong>
+                            <span>Your request will appear in your dashboard after submission.</span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-eraser"></i> Clear Form
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-message" id="requestMessage" aria-live="polite"></div>
+                </form>
+            </section>
+
+            <section class="resident-view resident-profile-view" id="residentProfileView" data-resident-view="profile">
+                <div class="request-page-header request-page-header-inside resident-form-header resident-profile-header">
+                    <div>
+                        <span class="resident-form-eyebrow">Resident Account</span>
+                        <h1>Profile</h1>
+                        <p>Review the account details currently connected to your request dashboard.</p>
+                    </div>
+                </div>
+
+                <div class="resident-profile-grid">
+                    <div class="resident-dashboard-panel resident-profile-card">
+                        <div class="resident-profile-banner">
+                            <div class="resident-profile-avatar resident-profile-avatar-large">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="resident-profile-banner-copy">
+                                <span class="resident-profile-banner-kicker">Verified Resident Account</span>
+                                <strong id="residentProfileFullName">Resident Account</strong>
+                                <span id="residentProfileUsername">@resident</span>
+                            </div>
+                            <div class="resident-profile-badges">
+                                <span class="resident-profile-badge">Dashboard Linked</span>
+                                <span class="resident-profile-badge resident-profile-badge-soft" id="residentProfileRoleBadge">Resident User</span>
+                            </div>
+                        </div>
+
+                        <div class="resident-profile-highlights">
+                            <div class="resident-profile-highlight">
+                                <span class="resident-summary-label">Total Requests</span>
+                                <strong id="residentProfileTotalRequests">0</strong>
+                            </div>
+                            <div class="resident-profile-highlight">
+                                <span class="resident-summary-label">Pending Now</span>
+                                <strong id="residentProfilePendingRequests">0</strong>
+                            </div>
+                            <div class="resident-profile-highlight">
+                                <span class="resident-summary-label">Latest Status</span>
+                                <strong id="residentProfileLatestStatus">No updates yet</strong>
+                            </div>
+                        </div>
+
+                        <div class="resident-dashboard-panel-header">
+                            <div class="resident-dashboard-panel-title">
+                                <span class="resident-dashboard-panel-icon">
+                                    <i class="fas fa-id-card"></i>
+                                </span>
+                                <h3>Account Information</h3>
+                            </div>
+                            <span>Personal details</span>
+                        </div>
+                        <div class="resident-summary-grid resident-profile-details">
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Full Name</span>
+                                <strong id="residentProfileNameValue">-</strong>
+                            </div>
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Username</span>
+                                <strong id="residentProfileUsernameValue">-</strong>
+                            </div>
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Email Address</span>
+                                <strong id="residentProfileEmailValue">-</strong>
+                            </div>
+                            <div class="resident-summary-item">
+                                <span class="resident-summary-label">Account Role</span>
+                                <strong id="residentProfileRoleValue">Resident User</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="resident-dashboard-panel resident-dashboard-panel-note">
+                        <div class="resident-profile-side-top">
+                            <div class="resident-dashboard-panel-header">
+                                <div class="resident-dashboard-panel-title">
+                                    <span class="resident-dashboard-panel-icon resident-dashboard-panel-icon-gold">
+                                        <i class="fas fa-shield-heart"></i>
+                                    </span>
+                                    <h3>Account Guide</h3>
+                                </div>
+                                <span>Resident access</span>
+                            </div>
+                            <div class="resident-profile-status-card">
+                                <span class="resident-profile-status-label">Current Access</span>
+                                <strong>Resident Dashboard Active</strong>
+                                <small>Your account can submit and monitor request records.</small>
+                            </div>
+                        </div>
+
+                        <ul class="resident-dashboard-note-list">
+                            <li>
+                                <span class="resident-dashboard-note-icon"><i class="fas fa-paper-plane"></i></span>
+                                <div>
+                                    <strong>Request submissions stay linked to this account</strong>
+                                    <span>Your current profile is used whenever you submit and track requests.</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="resident-dashboard-note-icon"><i class="fas fa-clock-rotate-left"></i></span>
+                                <div>
+                                    <strong>Status updates appear in your dashboard history</strong>
+                                    <span>Approved and rejected outcomes will continue to show in My Requests.</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="resident-dashboard-note-icon"><i class="fas fa-gear"></i></span>
+                                <div>
+                                    <strong>Profile tools can be expanded later</strong>
+                                    <span>If needed, we can add edit settings and account management in this section next.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="sidebar-overlay" id="residentSidebarOverlay"></div>
+    <div class="modal-overlay" id="residentRequestModalOverlay"></div>
+    <div class="request-preview-modal" id="residentRequestModal">
+        <div class="modal-header">
+            <h3>Request Details</h3>
+            <button class="modal-close" id="residentModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="request-preview">
+            <div class="preview-row">
+                <div class="preview-label">Request Type</div>
+                <div class="preview-value" id="residentModalRequestType">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Date Submitted</div>
+                <div class="preview-value" id="residentModalCreatedAt">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Date Needed</div>
+                <div class="preview-value" id="residentModalDateNeeded">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Purpose</div>
+                <div class="preview-value" id="residentModalPurpose">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Complete Address</div>
+                <div class="preview-value" id="residentModalAddress">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Contact Number</div>
+                <div class="preview-value" id="residentModalContactNumber">-</div>
+            </div>
+            <div class="preview-row preview-row-score">
+                <div class="preview-label">Screening Score</div>
+                <div class="preview-value preview-score-value" id="residentModalScreeningScore">0</div>
+            </div>
+            <div class="preview-row preview-row-accent">
+                <div class="preview-label">Screening Status</div>
+                <div class="preview-value" id="residentModalScreeningStatus">-</div>
+            </div>
+            <div class="preview-row preview-row-accent">
+                <div class="preview-label">Screening Summary</div>
+                <div class="preview-value" id="residentModalScreeningSummary">No screening notes yet.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Final Status</div>
+                <div class="preview-value" id="residentModalFinalStatus">-</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Additional Notes</div>
+                <div class="preview-value" id="residentModalAdditionalNotes">No additional notes provided.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Supporting Document</div>
+                <div class="preview-value" id="residentModalSupportingDocument">No file uploaded.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/request.js"></script>
+    <script src="../assets/js/my-requests.js"></script>
+</body>
+</html>

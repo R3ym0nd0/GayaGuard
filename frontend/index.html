@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barangay Gaya Gaya</title>
+    <title>GayaGuard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/logo.jpg" type="image/jpg">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-page="landing">
     <nav id="navbar" class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <img src="assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="logo-image">
-                <span class="logo-text">Barangay Gaya Gaya</span>
+                <span class="logo-text">GayaGuard</span>
             </div>
 
             <div class="nav-menu" id="navMenu">
@@ -22,7 +22,7 @@
                     <img src="assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="nav-menu-logo">
                     <div class="nav-menu-copy">
                         <span class="nav-menu-eyebrow">Navigation</span>
-                        <strong>Barangay Gaya Gaya</strong>
+                        <strong>GayaGuard</strong>
                     </div>
                 </div>
                 <a href="#home" class="nav-link active">Home</a>
@@ -30,6 +30,7 @@
                 <a href="#services" class="nav-link">Services</a>
                 <a href="#process" class="nav-link">Process</a>
                 <a href="#contact" class="nav-link">Location</a>
+                <a href="pages/my-requests.html" class="nav-link">My Requests</a>
                 <a href="pages/signup.html" class="btn btn-secondary signup-mobile">Sign Up</a>
                 <a href="pages/login.html" class="btn btn-primary login-mobile">Login</a>
             </div>
@@ -65,7 +66,7 @@
                     </p>
                     
                     <div class="hero-buttons">
-                        <a href="pages/request.html" class="btn btn-primary btn-lg">
+                        <a href="pages/request.html" class="btn btn-primary btn-lg" id="heroSubmitRequestBtn">
                             <i class="fas fa-paper-plane"></i> Submit Request
                         </a>
                         <button class="btn btn-secondary btn-lg">
@@ -328,6 +329,7 @@
             </div>
         </div>
     </footer>
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
 </html>

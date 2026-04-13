@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Request | BARANGAY GAYA GAYA</title>
+    <title>GayaGuard - Submit Request</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body data-page="request" class="auth-pending">
     <nav id="navbar" class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <img src="../assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="logo-image">
-                <span class="logo-text">Barangay Gaya Gaya</span>
+                <span class="logo-text">GayaGuard</span>
             </div>
 
             <div class="nav-menu" id="navMenu">
@@ -22,7 +22,7 @@
                     <img src="../assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="nav-menu-logo">
                     <div class="nav-menu-copy">
                         <span class="nav-menu-eyebrow">Navigation</span>
-                        <strong>Barangay Gaya Gaya</strong>
+                        <strong>GayaGuard</strong>
                     </div>
                 </div>
                 <a href="../index.html" class="nav-link">Home</a>
@@ -30,12 +30,13 @@
                 <a href="../index.html#services" class="nav-link">Services</a>
                 <a href="../index.html#process" class="nav-link">Process</a>
                 <a href="../index.html#contact" class="nav-link">Location</a>
-                <a href="signup.html" class="btn btn-secondary signup-mobile">Sign Up</a>
+                <a href="my-requests.html" class="nav-link">My Requests</a>
+                <a href="my-requests.html" class="btn btn-secondary signup-mobile">My Requests</a>
                 <a href="login.html" class="btn btn-primary login-mobile">Login</a>
             </div>
 
             <div class="nav-actions">
-                <a href="signup.html" class="btn btn-secondary signup-desktop">Sign Up</a>
+                <a href="my-requests.html" class="btn btn-secondary signup-desktop">My Requests</a>
                 <a href="login.html" class="btn btn-primary login-desktop">Login</a>
                 <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
                     <span></span>
@@ -58,26 +59,24 @@
 
                     <form id="requestForm" class="request-form">
                         
-                        <!-- Personal Information -->
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-                            <input type="text" class="form-input" placeholder="Enter your complete full name" required>
+                            <input type="text" class="form-input" name="fullName" placeholder="Enter your complete full name" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Complete Address</label>
-                            <input type="text" class="form-input" placeholder="House No., Street, Purok, Barangay Gaya Gaya" required>
+                            <input type="text" class="form-input" name="completeAddress" placeholder="House No., Street, Purok, Barangay Gaya Gaya" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Contact Number</label>
-                            <input type="tel" class="form-input" placeholder="Your mobile or telephone number" required>
+                            <input type="tel" class="form-input" name="contactNumber" placeholder="Your mobile or telephone number" required>
                         </div>
 
-                        <!-- Request Details -->
                         <div class="form-group">
                             <label class="form-label">Type of Request</label>
-                            <select class="form-input" required>
+                            <select class="form-input" name="requestType" required>
                                 <option value="" disabled selected>Select request type</option>
                                 <option value="clearance">Barangay Clearance</option>
                                 <option value="indigency">Certificate of Indigency</option>
@@ -89,17 +88,17 @@
 
                         <div class="form-group">
                             <label class="form-label">Date Needed</label>
-                            <input type="date" class="form-input" required>
+                            <input type="date" class="form-input" name="dateNeeded" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Purpose / Reason for Request</label>
-                            <textarea class="form-input form-textarea" placeholder="Provide a clear explanation for your request" rows="4" required></textarea>
+                            <textarea class="form-input form-textarea" name="purpose" placeholder="Provide a clear explanation for your request" rows="4" required></textarea>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Additional Notes <span class="optional-text">(Optional)</span></label>
-                            <textarea class="form-input form-textarea" placeholder="Any additional information you want to include" rows="3"></textarea>
+                            <textarea class="form-input form-textarea" name="additionalNotes" placeholder="Any additional information you want to include" rows="3"></textarea>
                         </div>
 
                         <div class="form-group">
@@ -110,11 +109,10 @@
                                     <p>Click or drag file to upload</p>
                                     <small>PDF, JPG, PNG up to 5MB</small>
                                 </div>
-                                <input type="file" class="file-input" accept=".pdf,.jpg,.jpeg,.png">
+                                <input type="file" class="file-input" id="supportingFileInput" name="supportingDocument" accept=".pdf,.jpg,.jpeg,.png">
                             </div>
                         </div>
 
-                        <!-- Form Actions -->
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-paper-plane"></i> Submit Request
@@ -124,6 +122,8 @@
                             </button>
                         </div>
 
+                        <div class="form-message" id="requestMessage" aria-live="polite"></div>
+
                     </form>
                 </div>
 
@@ -132,7 +132,6 @@
     </section>
 
 
-    <!-- ==================== FOOTER SECTION ==================== -->
     <footer class="footer-section">
         <div class="container">
             <div class="footer-grid">
@@ -151,6 +150,7 @@
                     <a href="../index.html#services">Services</a>
                     <a href="../index.html#process">Process</a>
                     <a href="../index.html#contact">Location</a>
+                    <a href="my-requests.html">My Requests</a>
                 </div>
 
                 <div class="footer-contact">
@@ -168,7 +168,9 @@
     </footer>
 
 
-    <!-- JavaScript -->
+    <script src="../assets/js/config.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/request.js"></script>
 </body>
 </html>

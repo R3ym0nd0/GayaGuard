@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GayaGuard - Sign Up</title>
+    <title>GayaGuard - Terms and Conditions</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
 </head>
-<body data-page="signup">
+<body data-page="terms">
     <nav id="navbar" class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
@@ -51,62 +51,53 @@
     <section class="login-section">
         <div class="container">
             <div class="login-grid">
-                <div class="login-card">
-                    <div class="login-card-header">
-                        <h2>Create Account</h2>
-                        <p>Register to access barangay digital services</p>
+                <div class="login-card terms-card">
+                    <div class="login-card-header terms-card-header">
+                        <span class="terms-eyebrow">Account and Service Guidelines</span>
+                        <h2>Terms and Conditions</h2>
+                        <p>Please read these basic terms before using the Barangay Gaya Gaya Request Screening and Monitoring System.</p>
                     </div>
 
-                    <form class="login-form" id="signupForm">
-                        <div class="form-group">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-input" name="fullName" placeholder="Enter your full name" required>
-                        </div>
+                    <div class="terms-content">
+                        <section class="terms-section-block">
+                            <h3>Use of the System</h3>
+                            <p>This system is intended to help residents submit and monitor barangay requests using a more organized digital process.</p>
+                        </section>
 
-                        <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-input" name="email" placeholder="Enter your email address" required>
-                        </div>
+                        <section class="terms-section-block">
+                            <h3>Accurate Information</h3>
+                            <p>Users must provide truthful, complete, and updated information when creating an account or submitting requests.</p>
+                        </section>
 
-                        <div class="form-group">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-input" name="username" placeholder="Choose a username" required>
-                        </div>
+                        <section class="terms-section-block">
+                            <h3>Account Responsibility</h3>
+                            <p>You are responsible for keeping your login credentials secure. Activity performed through your account may be treated as your own submission.</p>
+                        </section>
 
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <div class="password-field">
-                                <input type="password" class="form-input" id="signupPasswordInput" name="password" placeholder="Create a password" required>
-                                <button type="button" class="password-toggle" id="signupPasswordToggle">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <section class="terms-section-block">
+                            <h3>Screening and Review</h3>
+                            <p>Requests may go through screening, scoring, and review by authorized barangay staff before any final decision is recorded.</p>
+                        </section>
 
-                        <div class="form-group">
-                            <label class="form-label">Confirm Password</label>
-                            <div class="password-field">
-                                <input type="password" class="form-input" id="confirmPasswordInput" name="confirmPassword" placeholder="Confirm your password" required>
-                                <button type="button" class="password-toggle" id="confirmPasswordToggle">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <section class="terms-section-block">
+                            <h3>Supporting Documents</h3>
+                            <p>Uploaded files should be relevant and appropriate for the selected request. Incomplete or misleading documents may delay processing.</p>
+                        </section>
 
-                        <button type="submit" class="btn btn-primary btn-full">
-                            Create Account
-                        </button>
+                        <section class="terms-section-block">
+                            <h3>Privacy Notice</h3>
+                            <p>Account details and submitted request information may be stored and viewed by authorized administrators for processing, monitoring, and records management.</p>
+                        </section>
 
-                        <div class="login-links terms-inline-note">
-                            <p>By creating an account, you agree to our <a href="terms-and-conditions.html">Terms and Conditions</a>.</p>
-                        </div>
+                        <section class="terms-section-block">
+                            <h3>System Changes</h3>
+                            <p>The barangay may update procedures, features, or review steps whenever needed to improve the service and request handling workflow.</p>
+                        </section>
+                    </div>
 
-                        <div class="form-message" id="signupMessage" aria-live="polite"></div>
-
-                        <div class="login-links">
-                            <p>Already have an account? <a href="login.html">Login</a></p>
-                        </div>
-                    </form>
+                    <div class="login-links terms-links">
+                        <p>Back to <a href="signup.html">Sign Up</a> or <a href="login.html">Login</a></p>
+                    </div>
                 </div>
             </div>
         </div>

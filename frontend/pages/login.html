@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | BARANGAY GAYA GAYA</title>
+    <title>GayaGuard - Sign In</title>
     
-    <!-- External Resources -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Local Styles -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="icon" href="../assets/images/logo.jpg" type="image/jpg">
 </head>
-<body>
+<body data-page="login">
 
-    <!-- ==================== NAVBAR SECTION ==================== -->
     <nav id="navbar" class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <img src="../assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="logo-image">
-                <span class="logo-text">Barangay Gaya Gaya</span>
+                <span class="logo-text">GayaGuard</span>
             </div>
 
             <div class="nav-menu" id="navMenu">
@@ -28,7 +24,7 @@
                     <img src="../assets/images/icon.png" alt="Barangay Gaya Gaya Logo" class="nav-menu-logo">
                     <div class="nav-menu-copy">
                         <span class="nav-menu-eyebrow">Navigation</span>
-                        <strong>Barangay Gaya Gaya</strong>
+                        <strong>GayaGuard</strong>
                     </div>
                 </div>
                 <a href="../index.html#home" class="nav-link">Home</a>
@@ -36,6 +32,7 @@
                 <a href="../index.html#services" class="nav-link">Services</a>
                 <a href="../index.html#process" class="nav-link">Process</a>
                 <a href="../index.html#contact" class="nav-link">Location</a>
+                <a href="my-requests.html" class="nav-link">My Requests</a>
                 <a href="signup.html" class="btn btn-secondary signup-mobile">Sign Up</a>
                 <a href="login.html" class="btn btn-primary login-mobile">Login</a>
             </div>
@@ -54,7 +51,6 @@
     <div class="nav-overlay" id="navOverlay"></div>
 
 
-    <!-- ==================== LOGIN SECTION ==================== -->
     <section class="login-section">
         <div class="container">
             <div class="login-grid">
@@ -64,17 +60,17 @@
                         <p>Enter your credentials to continue</p>
                     </div>
 
-                    <form class="login-form">
+                    <form class="login-form" id="loginForm">
                         
                         <div class="form-group">
                             <label class="form-label">Email or Username</label>
-                            <input type="text" class="form-input" placeholder="Enter your email or username" required>
+                            <input type="text" class="form-input" name="identifier" placeholder="Enter your email or username" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Password</label>
                             <div class="password-field">
-                                <input type="password" class="form-input" id="passwordInput" placeholder="Enter your password" required>
+                                <input type="password" class="form-input" id="passwordInput" name="password" placeholder="Enter your password" required>
                                 <button type="button" class="password-toggle" id="passwordToggle">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -83,15 +79,17 @@
 
                         <div class="login-options">
                             <label class="checkbox-label">
-                                <input type="checkbox">
+                                <input type="checkbox" id="rememberMeCheckbox" name="rememberMe">
                                 <span>Remember me</span>
                             </label>
-                            <a href="#" class="forgot-password">Forgot Password?</a>
+                            <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-full">
                             Login
                         </button>
+
+                        <div class="form-message" id="loginMessage" aria-live="polite"></div>
 
                         <div class="login-links">
                             <p>Don't have an account? <a href="signup.html">Sign up</a></p>
@@ -105,7 +103,6 @@
     </section>
 
 
-    <!-- ==================== FOOTER SECTION ==================== -->
     <footer class="footer-section">
         <div class="container">
             <div class="footer-grid">
@@ -124,6 +121,7 @@
                     <a href="../index.html#services">Services</a>
                     <a href="../index.html#process">Process</a>
                     <a href="../index.html#contact">Location</a>
+                    <a href="my-requests.html">My Requests</a>
                 </div>
 
                 <div class="footer-contact">
@@ -141,25 +139,9 @@
     </footer>
 
 
-    <!-- JavaScript -->
+    <script src="../assets/js/config.js"></script>
     <script src="../assets/js/script.js"></script>
-
-    <script>
-        // Password Toggle Functionality
-        const passwordInput = document.getElementById('passwordInput');
-        const passwordToggle = document.getElementById('passwordToggle');
-
-        if (passwordToggle && passwordInput) {
-            passwordToggle.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                const icon = this.querySelector('i');
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-            });
-        }
-    </script>
+    <script src="../assets/js/auth.js"></script>
 
 </body>
 </html>
