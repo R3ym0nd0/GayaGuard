@@ -9,6 +9,29 @@ function setRequestMessage(element, message, type) {
   element.className = `form-message ${type}`;
 }
 
+function setRequestButtonLoading(button, isLoading, loadingText) {
+  if (!button) {
+    return;
+  }
+
+  if (!button.dataset.defaultLabel) {
+    button.dataset.defaultLabel = button.innerHTML.trim();
+  }
+
+  if (isLoading) {
+    button.disabled = true;
+    button.classList.add('is-loading');
+    button.setAttribute('aria-busy', 'true');
+    button.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span><span>${loadingText}</span>`;
+    return;
+  }
+
+  button.disabled = false;
+  button.classList.remove('is-loading');
+  button.removeAttribute('aria-busy');
+  button.innerHTML = button.dataset.defaultLabel;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const requestForm = document.getElementById('requestForm');
 
@@ -64,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.set('purpose', String(formData.get('purpose') || '').trim());
     formData.set('additionalNotes', String(formData.get('additionalNotes') || '').trim());
 
-    setRequestMessage(messageEl, 'Submitting your request...', 'info');
-    submitButton.disabled = true;
+    setRequestMessage(messageEl, 'Submitting your request. This may take a few seconds if the server is waking up...', 'info');
+    setRequestButtonLoading(submitButton, true, 'Submitting Request...');
 
     try {
       if (supportingFile && supportingFile.size > 5 * 1024 * 1024) {
@@ -101,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
       setRequestMessage(messageEl, error.message || 'Unable to submit your request right now.', 'error');
     } finally {
-      submitButton.disabled = false;
+      setRequestButtonLoading(submitButton, false);
     }
   });
 

@@ -43,6 +43,29 @@ function setFormMessage(element, message, type) {
   element.className = `form-message ${type}`;
 }
 
+function setButtonLoading(button, isLoading, loadingText) {
+  if (!button) {
+    return;
+  }
+
+  if (!button.dataset.defaultLabel) {
+    button.dataset.defaultLabel = button.innerHTML.trim();
+  }
+
+  if (isLoading) {
+    button.disabled = true;
+    button.classList.add('is-loading');
+    button.setAttribute('aria-busy', 'true');
+    button.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span><span>${loadingText}</span>`;
+    return;
+  }
+
+  button.disabled = false;
+  button.classList.remove('is-loading');
+  button.removeAttribute('aria-busy');
+  button.innerHTML = button.dataset.defaultLabel;
+}
+
 function bindPasswordToggle(input, toggle) {
   if (!input || !toggle) {
     return;
@@ -508,8 +531,8 @@ document.addEventListener('DOMContentLoaded', function () {
       };
       const rememberMe = Boolean(formData.get('rememberMe'));
 
-      setFormMessage(messageEl, 'Signing you in...', 'info');
-      submitButton.disabled = true;
+      setFormMessage(messageEl, 'Signing you in. This may take a few seconds if the server is waking up...', 'info');
+      setButtonLoading(submitButton, true, 'Signing In...');
 
       try {
         const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -536,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         setFormMessage(messageEl, error.message || 'Unable to login right now.', 'error');
       } finally {
-        submitButton.disabled = false;
+        setButtonLoading(submitButton, false);
       }
     });
   }
@@ -569,8 +592,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      setFormMessage(messageEl, 'Creating your account...', 'info');
-      submitButton.disabled = true;
+      setFormMessage(messageEl, 'Creating your account. This may take a few seconds if the server is waking up...', 'info');
+      setButtonLoading(submitButton, true, 'Creating Account...');
 
       try {
         const response = await fetch(`${API_BASE_URL}/auth/signup`, {
@@ -596,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         setFormMessage(messageEl, error.message || 'Unable to create account right now.', 'error');
       } finally {
-        submitButton.disabled = false;
+        setButtonLoading(submitButton, false);
       }
     });
   }
@@ -616,8 +639,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      setFormMessage(messageEl, 'Preparing reset instructions...', 'info');
-      submitButton.disabled = true;
+      setFormMessage(messageEl, 'Preparing reset instructions. This may take a few seconds if the server is waking up...', 'info');
+      setButtonLoading(submitButton, true, 'Sending Instructions...');
 
       try {
         const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
@@ -651,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         setFormMessage(messageEl, error.message || 'Unable to prepare reset instructions.', 'error');
       } finally {
-        submitButton.disabled = false;
+        setButtonLoading(submitButton, false);
       }
     });
   }
@@ -676,7 +699,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!token) {
       setFormMessage(messageEl, 'This reset link is missing or invalid. Please request a new one.', 'error');
-      submitButton.disabled = true;
+      setButtonLoading(submitButton, true, 'Link Invalid');
       return;
     }
 
@@ -695,8 +718,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      setFormMessage(messageEl, 'Resetting your password...', 'info');
-      submitButton.disabled = true;
+      setFormMessage(messageEl, 'Resetting your password. This may take a few seconds if the server is waking up...', 'info');
+      setButtonLoading(submitButton, true, 'Updating Password...');
 
       try {
         const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
@@ -721,7 +744,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         setFormMessage(messageEl, error.message || 'Unable to reset password right now.', 'error');
       } finally {
-        submitButton.disabled = false;
+        setButtonLoading(submitButton, false);
       }
     });
   }

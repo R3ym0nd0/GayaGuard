@@ -111,6 +111,29 @@ document.addEventListener('DOMContentLoaded', function () {
         return badge;
     }
 
+    function setActionButtonLoading(button, isLoading, loadingText) {
+        if (!button) {
+            return;
+        }
+
+        if (!button.dataset.defaultLabel) {
+            button.dataset.defaultLabel = button.innerHTML.trim();
+        }
+
+        if (isLoading) {
+            button.disabled = true;
+            button.classList.add('is-loading');
+            button.setAttribute('aria-busy', 'true');
+            button.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span><span>${loadingText}</span>`;
+            return;
+        }
+
+        button.disabled = false;
+        button.classList.remove('is-loading');
+        button.removeAttribute('aria-busy');
+        button.innerHTML = button.dataset.defaultLabel;
+    }
+
     function renderScreeningScore(score) {
         const normalizedScore = Number(score) || 0;
         const percentage = Math.max(0, Math.min(100, Math.round((normalizedScore / 12) * 100)));
@@ -714,12 +737,24 @@ document.addEventListener('DOMContentLoaded', function () {
             review: reviewRequestBtn
         };
         const activeButton = actionButtonMap[action];
-        const originalText = activeButton ? activeButton.textContent : '';
+        const loadingLabelMap = {
+            approve: 'Approving...',
+            reject: 'Rejecting...',
+            review: 'Saving Review...'
+        };
 
-        if (activeButton) {
-            activeButton.disabled = true;
-            activeButton.textContent = 'Saving...';
-        }
+        Object.values(actionButtonMap).forEach(function (button) {
+            if (!button) {
+                return;
+            }
+
+            if (button === activeButton) {
+                setActionButtonLoading(button, true, loadingLabelMap[action] || 'Saving...');
+                return;
+            }
+
+            button.disabled = true;
+        });
 
         try {
             const response = await fetch(`${API_BASE_URL}/admin/requests/${selectedRequest.id}/status`, {
@@ -742,10 +777,18 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             window.alert(error.message || 'Unable to update request.');
         } finally {
-            if (activeButton) {
-                activeButton.disabled = false;
-                activeButton.textContent = originalText;
-            }
+            Object.values(actionButtonMap).forEach(function (button) {
+                if (!button) {
+                    return;
+                }
+
+                if (button === activeButton) {
+                    setActionButtonLoading(button, false);
+                    return;
+                }
+
+                button.disabled = false;
+            });
         }
     }
 
