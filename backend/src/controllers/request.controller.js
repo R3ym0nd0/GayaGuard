@@ -54,8 +54,8 @@ const createRequest = asyncHandler(async (req, res) => {
     fullName.trim().length > 150 ||
     completeAddress.trim().length > 255 ||
     contactNumber.trim().length > 30 ||
-    purpose.trim().length > 500 ||
-    (additionalNotes && additionalNotes.trim().length > 300)
+      purpose.trim().length > 220 ||
+      (additionalNotes && additionalNotes.trim().length > 180)
   ) {
     return res.status(400).json({
       success: false,
