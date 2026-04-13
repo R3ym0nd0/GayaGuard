@@ -202,11 +202,14 @@
             </section>
 
             <section class="resident-view" id="residentRequestsView" data-resident-view="my-requests">
-                <div class="request-page-header request-page-header-inside resident-form-header resident-history-header">
-                    <div>
+                <div class="resident-requests-intro">
+                    <div class="resident-requests-intro-copy">
                         <span class="resident-form-eyebrow">Request History</span>
                         <h1>Submitted Requests</h1>
                         <p>Review your latest request activity, open full details, and monitor status updates from one place.</p>
+                    </div>
+                    <div class="resident-requests-intro-meta">
+                        <span class="resident-requests-count" id="residentRequestsCountBadge">0 Requests</span>
                     </div>
                 </div>
                 <div class="requests-empty-state" id="myRequestsEmptyState">
@@ -218,16 +221,15 @@
             </section>
 
             <section class="resident-view resident-form-view" id="residentSubmitRequestView" data-resident-view="submit-request">
-                <div class="request-page-header request-page-header-inside resident-form-header">
-                    <div>
-                        <span class="resident-form-eyebrow">Resident Request Portal</span>
-                        <h1>Submit a Request</h1>
-                        <p>Please complete the form below to send your request to Barangay Gaya Gaya.</p>
-                    </div>
-                </div>
-
                 <form id="requestForm" class="request-form resident-request-form">
                     <div class="resident-form-block">
+                        <div class="resident-submit-intro resident-form-block-intro">
+                            <div class="resident-submit-intro-copy">
+                                <h1>Submit a Request</h1>
+                                <p>Please complete the form below to send your request to Barangay Gaya Gaya.</p>
+                            </div>
+                        </div>
+
                         <div class="resident-form-block-header">
                             <span class="resident-form-block-step">01</span>
                             <div>
@@ -280,12 +282,12 @@
 
                         <div class="form-group">
                             <label class="form-label">Purpose / Reason for Request</label>
-                            <textarea class="form-input form-textarea" name="purpose" maxlength="500" placeholder="Provide a clear explanation for your request" rows="4" required></textarea>
+                            <textarea class="form-input form-textarea" name="purpose" maxlength="220" placeholder="Provide a clear explanation for your request" rows="4" required></textarea>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Additional Notes <span class="optional-text">(Optional)</span></label>
-                            <textarea class="form-input form-textarea" name="additionalNotes" maxlength="300" placeholder="Any additional information you want to include" rows="3"></textarea>
+                            <textarea class="form-input form-textarea" name="additionalNotes" maxlength="180" placeholder="Any additional information you want to include" rows="3"></textarea>
                         </div>
                     </div>
 
@@ -335,24 +337,29 @@
             </section>
 
             <section class="resident-view resident-profile-view" id="residentProfileView" data-resident-view="profile">
-                <div class="request-page-header request-page-header-inside resident-form-header resident-profile-header">
-                    <div>
+                <div class="resident-requests-intro resident-profile-intro">
+                    <div class="resident-requests-intro-copy">
                         <span class="resident-form-eyebrow">Resident Account</span>
                         <h1>Profile</h1>
                         <p>Review the account details currently connected to your request dashboard.</p>
+                    </div>
+                    <div class="resident-requests-intro-meta">
+                        <span class="resident-requests-count" id="residentProfileCountBadge">Account Overview</span>
                     </div>
                 </div>
 
                 <div class="resident-profile-grid">
                     <div class="resident-dashboard-panel resident-profile-card">
                         <div class="resident-profile-banner">
-                            <div class="resident-profile-avatar resident-profile-avatar-large">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="resident-profile-banner-copy">
-                                <span class="resident-profile-banner-kicker">Verified Resident Account</span>
-                                <strong id="residentProfileFullName">Resident Account</strong>
-                                <span id="residentProfileUsername">@resident</span>
+                            <div class="resident-profile-banner-main">
+                                <div class="resident-profile-avatar resident-profile-avatar-large">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="resident-profile-banner-copy">
+                                    <span class="resident-profile-banner-kicker">Verified Resident Account</span>
+                                    <strong id="residentProfileFullName">Resident Account</strong>
+                                    <span id="residentProfileUsername">@resident</span>
+                                </div>
                             </div>
                             <div class="resident-profile-badges">
                                 <span class="resident-profile-badge">Dashboard Linked</span>
@@ -362,16 +369,31 @@
 
                         <div class="resident-profile-highlights">
                             <div class="resident-profile-highlight">
-                                <span class="resident-summary-label">Total Requests</span>
-                                <strong id="residentProfileTotalRequests">0</strong>
+                                <span class="resident-profile-highlight-icon">
+                                    <i class="fas fa-file-lines"></i>
+                                </span>
+                                <div class="resident-profile-highlight-copy">
+                                    <span class="resident-summary-label">Total Requests</span>
+                                    <strong id="residentProfileTotalRequests">0</strong>
+                                </div>
                             </div>
                             <div class="resident-profile-highlight">
-                                <span class="resident-summary-label">Pending Now</span>
-                                <strong id="residentProfilePendingRequests">0</strong>
+                                <span class="resident-profile-highlight-icon">
+                                    <i class="fas fa-clock"></i>
+                                </span>
+                                <div class="resident-profile-highlight-copy">
+                                    <span class="resident-summary-label">Pending Now</span>
+                                    <strong id="residentProfilePendingRequests">0</strong>
+                                </div>
                             </div>
                             <div class="resident-profile-highlight">
-                                <span class="resident-summary-label">Latest Status</span>
-                                <strong id="residentProfileLatestStatus">No updates yet</strong>
+                                <span class="resident-profile-highlight-icon">
+                                    <i class="fas fa-chart-simple"></i>
+                                </span>
+                                <div class="resident-profile-highlight-copy">
+                                    <span class="resident-summary-label">Latest Status</span>
+                                    <strong id="residentProfileLatestStatus">No updates yet</strong>
+                                </div>
                             </div>
                         </div>
 
@@ -386,20 +408,40 @@
                         </div>
                         <div class="resident-summary-grid resident-profile-details">
                             <div class="resident-summary-item">
-                                <span class="resident-summary-label">Full Name</span>
-                                <strong id="residentProfileNameValue">-</strong>
+                                <span class="resident-profile-detail-icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <div class="resident-profile-detail-copy">
+                                    <span class="resident-summary-label">Full Name</span>
+                                    <strong id="residentProfileNameValue">-</strong>
+                                </div>
                             </div>
                             <div class="resident-summary-item">
-                                <span class="resident-summary-label">Username</span>
-                                <strong id="residentProfileUsernameValue">-</strong>
+                                <span class="resident-profile-detail-icon">
+                                    <i class="fas fa-at"></i>
+                                </span>
+                                <div class="resident-profile-detail-copy">
+                                    <span class="resident-summary-label">Username</span>
+                                    <strong id="residentProfileUsernameValue">-</strong>
+                                </div>
                             </div>
                             <div class="resident-summary-item">
-                                <span class="resident-summary-label">Email Address</span>
-                                <strong id="residentProfileEmailValue">-</strong>
+                                <span class="resident-profile-detail-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <div class="resident-profile-detail-copy">
+                                    <span class="resident-summary-label">Email Address</span>
+                                    <strong id="residentProfileEmailValue">-</strong>
+                                </div>
                             </div>
                             <div class="resident-summary-item">
-                                <span class="resident-summary-label">Account Role</span>
-                                <strong id="residentProfileRoleValue">Resident User</strong>
+                                <span class="resident-profile-detail-icon">
+                                    <i class="fas fa-shield-halved"></i>
+                                </span>
+                                <div class="resident-profile-detail-copy">
+                                    <span class="resident-summary-label">Account Role</span>
+                                    <strong id="residentProfileRoleValue">Resident User</strong>
+                                </div>
                             </div>
                         </div>
                     </div>

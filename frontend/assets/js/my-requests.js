@@ -53,6 +53,11 @@ function renderResidentScreeningScore(score) {
   `;
 }
 
+function getResidentScorePercentage(score) {
+  const normalizedScore = Number(score) || 0;
+  return Math.max(0, Math.min(100, Math.round((normalizedScore / 12) * 100)));
+}
+
 function getResidentBadgeClass(type, value) {
   if (type === 'screening') {
     const screeningMap = {
@@ -91,6 +96,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const profileLatestStatus = document.getElementById('residentProfileLatestStatus');
   const listEl = document.getElementById('myRequestsList');
   const emptyEl = document.getElementById('myRequestsEmptyState');
+  const requestsCountBadge = document.getElementById('residentRequestsCountBadge');
   const profileNameEl = document.getElementById('residentProfileName');
   const logoutLink = document.getElementById('residentLogoutLink');
   const totalRequestsEl = document.getElementById('residentTotalRequests');
@@ -445,6 +451,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         totalRequestsEl.textContent = requests.length;
       }
 
+      if (requestsCountBadge) {
+        requestsCountBadge.textContent = `${requests.length} Request${requests.length === 1 ? '' : 's'}`;
+      }
+
       if (pendingRequestsEl) {
         pendingRequestsEl.textContent = pendingCount;
       }
@@ -511,33 +521,53 @@ document.addEventListener('DOMContentLoaded', async function () {
         card.className = 'resident-request-card';
         card.innerHTML = `
         <div class="resident-request-top">
-          <div class="resident-request-title-group">
-            <span class="resident-request-kicker">Request Record</span>
-            <h4>${formatResidentRequestType(request.request_type)}</h4>
-            <p>Submitted on ${formatResidentDate(request.created_at)}</p>
+          <div class="resident-request-title-wrap">
+            <span class="resident-request-type-icon"><i class="fas fa-file-lines"></i></span>
+            <div class="resident-request-title-group">
+              <h4>${formatResidentRequestType(request.request_type)}</h4>
+              <p>Submitted on ${formatResidentDate(request.created_at)}</p>
+            </div>
           </div>
-          <span class="resident-request-date">Needed by ${formatResidentDate(request.date_needed)}</span>
-        </div>
-        <div class="resident-request-body">
-          <div class="resident-request-detail">
-            <span class="resident-request-detail-label">Purpose</span>
-            <p>${request.purpose || '-'}</p>
-          </div>
-          <div class="resident-request-detail">
-            <span class="resident-request-detail-label">Address</span>
-            <p>${request.complete_address || '-'}</p>
-          </div>
-          <div class="resident-request-detail">
-            <span class="resident-request-detail-label">Supporting Document</span>
-            <p>${request.supporting_file_name ? `<a href="${MY_REQUESTS_UPLOADS_BASE_URL}/${request.supporting_file_name}" target="_blank" rel="noopener noreferrer">${request.supporting_file_name}</a>` : 'None uploaded'}</p>
-          </div>
-        </div>
-        <div class="resident-request-footer">
           <div class="resident-request-statuses">
             <span class="status-badge ${getResidentBadgeClass('screening', request.screening_status)}">${formatResidentStatus(request.screening_status)}</span>
             <span class="status-badge ${getResidentBadgeClass('final', request.final_status)}">${formatResidentStatus(request.final_status)}</span>
           </div>
-          <span class="resident-request-link-hint">Tap to view details</span>
+        </div>
+        <div class="resident-request-meta-grid">
+          <div class="resident-request-meta-item">
+            <span class="resident-request-meta-icon"><i class="fas fa-calendar-day"></i></span>
+            <div>
+              <span class="resident-request-detail-label">Date Needed</span>
+              <p>${formatResidentDate(request.date_needed)}</p>
+            </div>
+          </div>
+          <div class="resident-request-meta-item">
+            <span class="resident-request-meta-icon"><i class="fas fa-paperclip"></i></span>
+            <div>
+              <span class="resident-request-detail-label">Supporting Document</span>
+              <p class="resident-request-meta-file">${request.supporting_file_name ? `<a href="${MY_REQUESTS_UPLOADS_BASE_URL}/${request.supporting_file_name}" target="_blank" rel="noopener noreferrer">${request.supporting_file_name}</a>` : 'None uploaded'}</p>
+            </div>
+          </div>
+        </div>
+        <div class="resident-request-body">
+          <div class="resident-request-meta-item resident-request-summary-item">
+            <span class="resident-request-meta-icon"><i class="fas fa-chart-simple"></i></span>
+            <div>
+              <span class="resident-request-detail-label">Screening Score</span>
+              <p class="resident-request-score-text">${getResidentScorePercentage(request.screening_score)}% Risk Level</p>
+              <small>${Number(request.screening_score) || 0} pts · ${formatResidentStatus(request.screening_status)}</small>
+            </div>
+          </div>
+          <div class="resident-request-meta-item resident-request-summary-item">
+            <span class="resident-request-meta-icon"><i class="fas fa-location-dot"></i></span>
+            <div>
+              <span class="resident-request-detail-label">Address</span>
+              <p class="resident-request-clamp">${request.complete_address || '-'}</p>
+            </div>
+          </div>
+        </div>
+        <div class="resident-request-footer">
+          <span class="resident-request-link-hint">Tap to view full request details</span>
         </div>
       `;
 
