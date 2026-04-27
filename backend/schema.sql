@@ -30,8 +30,24 @@ CREATE TABLE IF NOT EXISTS requests (
     screening_status VARCHAR(30) NOT NULL DEFAULT 'pending_screening' CHECK (
         screening_status IN ('pending_screening', 'low_concern', 'needs_review', 'high_concern')
     ),
-    final_status VARCHAR(30) NOT NULL DEFAULT 'pending' CHECK (
-        final_status IN ('pending', 'approved', 'rejected', 'completed')
+    payment_status VARCHAR(30) NOT NULL DEFAULT 'unpaid' CHECK (
+        payment_status IN ('unpaid', 'pending_verification', 'paid')
+    ),
+    payment_amount NUMERIC(10,2) NOT NULL DEFAULT 0,
+    payment_reference VARCHAR(120),
+    paid_at TIMESTAMPTZ,
+    release_proof_file_name TEXT,
+    final_status VARCHAR(30) NOT NULL DEFAULT 'submitted' CHECK (
+        final_status IN (
+            'pending',
+            'approved',
+            'rejected',
+            'completed',
+            'submitted',
+            'under_review',
+            'preparing_document',
+            'ready_for_pickup'
+        )
     ),
     reviewed_by UUID REFERENCES users(id) ON DELETE SET NULL,
     reviewed_at TIMESTAMPTZ,
@@ -53,6 +69,21 @@ ADD COLUMN IF NOT EXISTS screening_score INTEGER NOT NULL DEFAULT 0;
 
 ALTER TABLE requests
 ADD COLUMN IF NOT EXISTS screening_summary TEXT;
+
+ALTER TABLE requests
+ADD COLUMN IF NOT EXISTS payment_status VARCHAR(30) NOT NULL DEFAULT 'unpaid';
+
+ALTER TABLE requests
+ADD COLUMN IF NOT EXISTS payment_amount NUMERIC(10,2) NOT NULL DEFAULT 0;
+
+ALTER TABLE requests
+ADD COLUMN IF NOT EXISTS payment_reference VARCHAR(120);
+
+ALTER TABLE requests
+ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;
+
+ALTER TABLE requests
+ADD COLUMN IF NOT EXISTS release_proof_file_name TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);

@@ -17,6 +17,11 @@ const getMyRequests = asyncHandler(async (req, res) => {
       screening_score,
       screening_summary,
       screening_status,
+      payment_status,
+      payment_amount,
+      payment_reference,
+      paid_at,
+      release_proof_file_name,
       final_status,
       created_at,
       updated_at
@@ -95,9 +100,10 @@ const createRequest = asyncHandler(async (req, res) => {
       supporting_file_name,
       screening_score,
       screening_summary,
-      screening_status
+      screening_status,
+      final_status
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     RETURNING id, full_name, request_type, final_status, screening_score, screening_summary, screening_status, created_at`,
     [
       userId,
@@ -111,7 +117,8 @@ const createRequest = asyncHandler(async (req, res) => {
       uploadedFileName,
       screeningResult.score,
       screeningResult.summary,
-      screeningResult.screeningStatus
+      screeningResult.screeningStatus,
+      'submitted'
     ]
   );
 

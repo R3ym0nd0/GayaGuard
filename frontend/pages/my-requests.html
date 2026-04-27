@@ -112,7 +112,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-value" id="residentPendingRequests">0</div>
-                            <div class="stat-label">Pending</div>
+                            <div class="stat-label">Active</div>
                         </div>
                     </div>
 
@@ -122,7 +122,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-value" id="residentApprovedRequests">0</div>
-                            <div class="stat-label">Approved</div>
+                            <div class="stat-label">Completed</div>
                         </div>
                     </div>
 
@@ -134,6 +134,21 @@
                             <div class="stat-value" id="residentRejectedRequests">0</div>
                             <div class="stat-label">Rejected</div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="resident-payment-alert" id="residentPaymentAlert" hidden>
+                    <div class="resident-payment-alert-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="resident-payment-alert-copy">
+                        <span class="resident-payment-alert-eyebrow">Payment Notice</span>
+                        <strong id="residentPaymentAlertTitle">No payment update yet</strong>
+                        <p id="residentPaymentAlertText">Once the barangay sets a payment amount or verification status, it will appear here.</p>
+                    </div>
+                    <div class="resident-payment-alert-meta">
+                        <span class="resident-payment-alert-amount" id="residentPaymentAlertAmount">PHP 0.00</span>
+                        <button type="button" class="btn btn-secondary" data-resident-action="my-requests">View Request</button>
                     </div>
                 </div>
 
@@ -382,7 +397,7 @@
                                     <i class="fas fa-clock"></i>
                                 </span>
                                 <div class="resident-profile-highlight-copy">
-                                    <span class="resident-summary-label">Pending Now</span>
+                                    <span class="resident-summary-label">Active Now</span>
                                     <strong id="residentProfilePendingRequests">0</strong>
                                 </div>
                             </div>
@@ -540,6 +555,22 @@
                 <div class="preview-value" id="residentModalScreeningSummary">No screening notes yet.</div>
             </div>
             <div class="preview-row">
+                <div class="preview-label">Payment Status</div>
+                <div class="preview-value" id="residentModalPaymentStatus">Unpaid</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Payment Amount</div>
+                <div class="preview-value" id="residentModalPaymentAmount">₱0.00</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Payment Reference</div>
+                <div class="preview-value" id="residentModalPaymentReference">No payment reference yet.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Paid At</div>
+                <div class="preview-value" id="residentModalPaidAt">Not paid yet.</div>
+            </div>
+            <div class="preview-row">
                 <div class="preview-label">Final Status</div>
                 <div class="preview-value" id="residentModalFinalStatus">-</div>
             </div>
@@ -550,6 +581,13 @@
             <div class="preview-row">
                 <div class="preview-label">Supporting Document</div>
                 <div class="preview-value" id="residentModalSupportingDocument">No file uploaded.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Ready Document Proof</div>
+                <div class="preview-value" id="residentModalReleaseProof">No proof uploaded yet.</div>
+            </div>
+            <div class="preview-actions">
+                <button class="btn btn-secondary" id="residentPrintRequestBtn" type="button">Print Summary</button>
             </div>
         </div>
     </div>

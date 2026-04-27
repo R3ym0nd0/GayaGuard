@@ -2416,6 +2416,31 @@ html, body {
     color: #991B1B;
 }
 
+.status-submitted {
+    background-color: #E0F2FE;
+    color: #075985;
+}
+
+.status-under_review {
+    background-color: #EDE9FE;
+    color: #6D28D9;
+}
+
+.status-preparing_document {
+    background-color: #FEF3C7;
+    color: #B45309;
+}
+
+.status-ready_for_pickup {
+    background-color: #DCFCE7;
+    color: #166534;
+}
+
+.status-completed {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
 .admin-sidebar {
     position: fixed;
     top: 0;
@@ -3231,6 +3256,53 @@ html, body {
     flex-wrap: wrap;
 }
 
+.preview-action-guide {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(23, 107, 77, 0.06);
+    border: 1px solid rgba(23, 107, 77, 0.1);
+    color: var(--gray-700);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.preview-actions .btn.is-hidden {
+    display: none;
+}
+
+.preview-payment-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.preview-proof-controls {
+    grid-template-columns: 1fr;
+}
+
+.preview-payment-controls .filter-select,
+.preview-payment-controls .form-input,
+.preview-payment-controls .btn {
+    width: 100%;
+}
+
+.preview-payment-controls .btn {
+    grid-column: 1 / -1;
+}
+
+.preview-file-selected {
+    min-height: 48px;
+    justify-content: flex-start;
+    border-radius: 14px;
+}
+
+.preview-file-selected span {
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
 .insight-item {
     padding: 14px 0;
     border-bottom: 1px solid var(--gray-100);
@@ -3395,6 +3467,10 @@ html, body {
     .preview-actions .btn {
         width: 100%;
         min-height: 48px;
+    }
+
+    .preview-payment-controls {
+        grid-template-columns: 1fr;
     }
 
     .request-preview-modal {
@@ -4163,8 +4239,21 @@ html, body {
 .resident-request-footer {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 12px;
+}
+
+.resident-request-proof-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(23, 107, 77, 0.08);
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
 }
 
 .resident-request-link-hint {
@@ -4494,6 +4583,77 @@ html, body {
 
 .resident-stats-grid {
     margin-bottom: 24px;
+}
+
+.resident-payment-alert {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 18px 20px;
+    border-radius: 20px;
+    background:
+        radial-gradient(circle at top right, rgba(197, 150, 45, 0.12), transparent 30%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(251, 246, 233, 0.98) 100%);
+    border: 1px solid rgba(197, 150, 45, 0.22);
+    box-shadow: 0 16px 30px rgba(67, 48, 10, 0.08);
+}
+
+.resident-payment-alert-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+    color: var(--white);
+    box-shadow: 0 12px 22px rgba(155, 116, 31, 0.2);
+    flex-shrink: 0;
+}
+
+.resident-payment-alert-copy {
+    min-width: 0;
+}
+
+.resident-payment-alert-eyebrow {
+    display: inline-block;
+    margin-bottom: 6px;
+    color: var(--secondary-dark);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.resident-payment-alert-copy strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--gray-900);
+    font-size: 17px;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.resident-payment-alert-copy p {
+    color: var(--gray-600);
+    line-height: 1.65;
+}
+
+.resident-payment-alert-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.resident-payment-alert-amount {
+    color: var(--secondary-dark);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .resident-stats-grid .stat-card:first-child .stat-icon {
@@ -4957,6 +5117,16 @@ html, body {
         align-items: stretch;
     }
 
+    .resident-payment-alert {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+
+    .resident-payment-alert-meta {
+        width: 100%;
+        align-items: flex-start;
+    }
+
     .resident-form-header {
         flex-direction: column;
         align-items: stretch;
@@ -4988,8 +5158,13 @@ html, body {
         grid-template-columns: 1fr;
     }
 
-    .resident-request-statuses,
+    .resident-request-statuses {
+        justify-content: flex-start;
+    }
+
     .resident-request-footer {
+        flex-direction: column;
+        align-items: flex-start;
         justify-content: flex-start;
     }
 
@@ -5101,9 +5276,14 @@ html, body {
         gap: 16px;
     }
 
+    .resident-profile-grid {
+        gap: 14px;
+    }
+
     .resident-profile-banner {
-        padding: 14px;
-        gap: 12px;
+        margin-bottom: 12px;
+        padding: 12px;
+        gap: 10px;
     }
 
     .resident-profile-banner-kicker {
@@ -5114,6 +5294,19 @@ html, body {
     .resident-profile-highlights,
     .resident-profile-details {
         gap: 10px;
+    }
+
+    .resident-profile-highlights {
+        margin-bottom: 14px;
+    }
+
+    .resident-profile-side-top {
+        margin-bottom: 12px;
+    }
+
+    .resident-profile-status-card {
+        padding: 14px;
+        border-radius: 16px;
     }
 
     .resident-profile-detail-icon,
@@ -5127,6 +5320,15 @@ html, body {
     .resident-summary-item strong {
         font-size: 15px;
         line-height: 1.45;
+    }
+
+    .resident-dashboard-note-list {
+        gap: 10px;
+    }
+
+    .resident-dashboard-note-list li {
+        padding: 12px 14px;
+        gap: 10px;
     }
 
     .resident-request-title-wrap {
@@ -5192,6 +5394,21 @@ html, body {
     .resident-overview-hero,
     .resident-dashboard-panel {
         padding: 20px;
+    }
+
+    .resident-payment-alert {
+        padding: 16px;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .resident-payment-alert-amount {
+        font-size: 20px;
+    }
+
+    .resident-profile-intro {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
     }
 
     .resident-profile-summary {
@@ -5323,6 +5540,309 @@ html, body {
     .resident-form-header {
         margin-bottom: 22px;
         padding-bottom: 16px;
+    }
+}
+
+.print-document-page {
+    min-height: 100vh;
+    background: #eef4f0;
+    color: var(--gray-800);
+}
+
+.print-document-shell {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+}
+
+.print-document-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 24px;
+    padding: 24px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 251, 249, 0.98) 100%);
+    border: 1px solid rgba(23, 107, 77, 0.12);
+    box-shadow: 0 18px 34px rgba(9, 34, 24, 0.06);
+}
+
+.print-document-toolbar-copy h1 {
+    margin: 0 0 8px;
+    color: var(--gray-900);
+    font-size: 30px;
+}
+
+.print-document-toolbar-copy p {
+    margin: 0;
+    color: var(--gray-600);
+    line-height: 1.7;
+}
+
+.print-document-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.print-document-eyebrow {
+    display: inline-flex;
+    margin-bottom: 12px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(23, 107, 77, 0.08);
+    color: var(--primary-dark);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.print-document-paper {
+    min-height: 1122px;
+    padding: 54px 58px;
+    background: var(--white);
+    border-radius: 26px;
+    border: 1px solid rgba(15, 79, 57, 0.12);
+    box-shadow: 0 20px 40px rgba(9, 34, 24, 0.08);
+}
+
+.print-document-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 60vh;
+    text-align: center;
+    color: var(--gray-600);
+}
+
+.print-document-loading strong {
+    color: var(--gray-900);
+    font-size: 18px;
+}
+
+.print-document-header {
+    text-align: center;
+    margin-bottom: 38px;
+}
+
+.print-document-header-top,
+.print-document-header-sub {
+    color: var(--gray-700);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.print-document-header-main {
+    margin-top: 6px;
+    color: var(--primary-dark);
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.print-document-title {
+    margin-top: 22px;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gray-900);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.print-document-body {
+    color: #111827;
+    line-height: 1.9;
+    font-size: 16px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.print-document-body p {
+    margin: 0 0 18px;
+    text-align: justify;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.print-document-body strong {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.print-document-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 26px 0;
+}
+
+.print-detail-item {
+    padding: 14px 16px;
+    border: 1px solid rgba(23, 107, 77, 0.14);
+    border-radius: 16px;
+    background: rgba(23, 107, 77, 0.03);
+}
+
+.print-detail-item span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--gray-500);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.print-detail-item strong {
+    color: var(--gray-900);
+    font-size: 15px;
+    line-height: 1.6;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.print-document-footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    margin-top: 70px;
+}
+
+.print-signature-block {
+    text-align: center;
+}
+
+.print-signature-line {
+    height: 1px;
+    margin-bottom: 10px;
+    background: rgba(15, 23, 42, 0.35);
+}
+
+.print-signature-block strong {
+    display: block;
+    color: var(--gray-900);
+}
+
+.print-signature-block span {
+    color: var(--gray-500);
+    font-size: 13px;
+}
+
+@media (max-width: 920px) {
+    .print-document-toolbar {
+        flex-direction: column;
+    }
+
+    .print-document-toolbar-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .print-document-toolbar-actions .btn {
+        flex: 1 1 200px;
+    }
+
+    .print-document-paper {
+        min-height: 0;
+        padding: 32px 24px;
+    }
+
+    .print-document-details,
+    .print-document-footer {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+
+    .print-document-page {
+        background: var(--white);
+    }
+
+    body.print-document-page {
+        margin: 0;
+    }
+
+    .print-document-shell {
+        max-width: none;
+        padding: 0;
+    }
+
+    .print-document-toolbar {
+        display: none;
+    }
+
+    .print-document-paper {
+        min-height: 0;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .print-document-header {
+        margin-bottom: 24px;
+    }
+
+    .print-document-header-top,
+    .print-document-header-sub {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .print-document-header-main {
+        font-size: 22px;
+    }
+
+    .print-document-title {
+        margin-top: 16px;
+        font-size: 22px;
+    }
+
+    .print-document-body {
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .print-document-body p {
+        margin-bottom: 12px;
+    }
+
+    .print-document-details {
+        gap: 10px;
+        margin: 18px 0;
+    }
+
+    .print-detail-item {
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
+
+    .print-detail-item span {
+        margin-bottom: 4px;
+        font-size: 10px;
+    }
+
+    .print-detail-item strong {
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .print-document-footer {
+        margin-top: 38px;
+        gap: 18px;
+    }
+
+    .print-signature-block span {
+        font-size: 11px;
     }
 }
 

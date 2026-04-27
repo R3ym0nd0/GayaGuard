@@ -41,12 +41,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const previewScreeningScore = document.getElementById('previewScreeningScore');
     const previewScreeningStatus = document.getElementById('previewScreeningStatus');
     const previewScreeningSummary = document.getElementById('previewScreeningSummary');
+    const previewPaymentStatus = document.getElementById('previewPaymentStatus');
+    const previewPaymentAmount = document.getElementById('previewPaymentAmount');
+    const previewPaymentReference = document.getElementById('previewPaymentReference');
+    const previewPaidAt = document.getElementById('previewPaidAt');
     const previewFinalStatus = document.getElementById('previewFinalStatus');
     const previewAdditionalNotes = document.getElementById('previewAdditionalNotes');
     const previewSupportingDocument = document.getElementById('previewSupportingDocument');
+    const previewReleaseProof = document.getElementById('previewReleaseProof');
+    const previewActionGuide = document.getElementById('previewActionGuide');
     const approveRequestBtn = document.getElementById('approveRequestBtn');
     const rejectRequestBtn = document.getElementById('rejectRequestBtn');
     const reviewRequestBtn = document.getElementById('reviewRequestBtn');
+    const prepareRequestBtn = document.getElementById('prepareRequestBtn');
+    const readyRequestBtn = document.getElementById('readyRequestBtn');
+    const printRequestBtn = document.getElementById('printRequestBtn');
+    const paymentStatusInput = document.getElementById('paymentStatusInput');
+    const paymentAmountInput = document.getElementById('paymentAmountInput');
+    const paymentReferenceInput = document.getElementById('paymentReferenceInput');
+    const savePaymentBtn = document.getElementById('savePaymentBtn');
+    const releaseProofInput = document.getElementById('releaseProofInput');
+    const releaseProofSelected = document.getElementById('releaseProofSelected');
+    const saveReleaseProofBtn = document.getElementById('saveReleaseProofBtn');
 
     let selectedRequest = null;
     let currentAdminView = 'dashboard';
@@ -78,6 +94,14 @@ document.addEventListener('DOMContentLoaded', function () {
             day: 'numeric',
             year: 'numeric'
         });
+    }
+
+    function formatCurrency(value) {
+        const amount = Number(value) || 0;
+        return new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP'
+        }).format(amount);
     }
 
     function formatStatusLabel(status) {
@@ -151,9 +175,166 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     }
 
+    function setActionVisibility(button, shouldShow) {
+        if (!button) {
+            return;
+        }
+
+        button.classList.toggle('is-hidden', !shouldShow);
+        button.disabled = !shouldShow;
+    }
+
+    function updatePreviewActions(request) {
+        const status = request.final_status;
+        const hasOutstandingPayment = Number(request.payment_amount) > 0 && request.payment_status !== 'paid';
+        const statusMap = {
+            submitted: {
+                guide: 'Next step: start the review so the request can move into screening.',
+                show: ['print', 'start_review', 'reject']
+            },
+            under_review: {
+                guide: 'Next step: prepare the document once review is complete, or reject if needed.',
+                show: ['print', 'prepare_document', 'reject']
+            },
+            preparing_document: {
+                guide: 'Next step: mark the document as ready once the barangay copy is prepared.',
+                show: ['print', 'mark_ready', 'reject']
+            },
+            ready_for_pickup: {
+                guide: hasOutstandingPayment
+                    ? 'This request is ready, but payment still needs to be marked as paid before completion.'
+                    : 'Next step: complete the request after the resident receives the document.',
+                show: hasOutstandingPayment ? ['print'] : ['print', 'complete']
+            },
+            completed: {
+                guide: 'This request is already completed. You can still print the document summary.',
+                show: ['print']
+            },
+            approved: {
+                guide: 'This request is already completed. You can still print the document summary.',
+                show: ['print']
+            },
+            rejected: {
+                guide: 'This request has been rejected. Only printing is available now.',
+                show: ['print']
+            },
+            pending: {
+                guide: 'Next step: start the review so the request can move into screening.',
+                show: ['print', 'start_review', 'reject']
+            }
+        };
+
+        const config = statusMap[status] || statusMap.submitted;
+        const visibleActions = new Set(config.show);
+
+        if (previewActionGuide) {
+            previewActionGuide.textContent = config.guide;
+        }
+
+        setActionVisibility(printRequestBtn, visibleActions.has('print'));
+        setActionVisibility(reviewRequestBtn, visibleActions.has('start_review'));
+        setActionVisibility(prepareRequestBtn, visibleActions.has('prepare_document'));
+        setActionVisibility(readyRequestBtn, visibleActions.has('mark_ready'));
+        setActionVisibility(approveRequestBtn, visibleActions.has('complete'));
+        setActionVisibility(rejectRequestBtn, visibleActions.has('reject'));
+    }
+
+    function escapePrintHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function openPrintableSummary(request, options = {}) {
+        const statusTitle = options.statusTitle || 'Processing Status';
+        const printWindow = window.open('', '_blank', 'width=900,height=700');
+
+        if (!printWindow) {
+            window.alert('Please allow popups first so the print summary can open.');
+            return;
+        }
+
+        const proofLabel = request.release_proof_file_name ? request.release_proof_file_name : 'No proof uploaded yet.';
+        const documentLabel = request.supporting_file_name ? request.supporting_file_name : 'No file uploaded.';
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>GayaGuard - Request Summary</title>
+                <style>
+                    body { font-family: Arial, sans-serif; color: #1f2937; margin: 32px; }
+                    .sheet { max-width: 820px; margin: 0 auto; }
+                    .brand { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #176b4d; }
+                    .brand small { display: block; color: #176b4d; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+                    .brand h1 { margin: 0 0 8px; font-size: 30px; color: #0f4f39; }
+                    .brand p { margin: 0; color: #475569; line-height: 1.6; }
+                    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+                    .item { border: 1px solid #dbe7e0; border-radius: 14px; padding: 14px 16px; background: #fbfdfb; }
+                    .item.full { grid-column: 1 / -1; }
+                    .label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
+                    .value { font-size: 15px; line-height: 1.7; color: #0f172a; word-break: break-word; }
+                    .footer { margin-top: 24px; font-size: 12px; color: #64748b; }
+                    @media print {
+                        body { margin: 0; }
+                        .sheet { max-width: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="sheet">
+                    <div class="brand">
+                        <small>GayaGuard</small>
+                        <h1>Request Summary</h1>
+                        <p>Barangay Gaya Gaya Request Screening and Monitoring System</p>
+                    </div>
+                    <div class="grid">
+                        <div class="item"><span class="label">Resident Name</span><div class="value">${escapePrintHtml(request.full_name || '-')}</div></div>
+                        <div class="item"><span class="label">Request Type</span><div class="value">${escapePrintHtml(formatRequestType(request.request_type))}</div></div>
+                        <div class="item"><span class="label">Date Submitted</span><div class="value">${escapePrintHtml(formatDate(request.created_at))}</div></div>
+                        <div class="item"><span class="label">Date Needed</span><div class="value">${escapePrintHtml(formatDate(request.date_needed))}</div></div>
+                        <div class="item"><span class="label">Screening Score</span><div class="value">${escapePrintHtml(`${Math.max(0, Math.min(100, Math.round(((Number(request.screening_score) || 0) / 12) * 100)))}% (${Number(request.screening_score) || 0} pts)`)}</div></div>
+                        <div class="item"><span class="label">Screening Status</span><div class="value">${escapePrintHtml(formatStatusLabel(request.screening_status))}</div></div>
+                        <div class="item"><span class="label">${escapePrintHtml(statusTitle)}</span><div class="value">${escapePrintHtml(formatStatusLabel(request.final_status))}</div></div>
+                        <div class="item"><span class="label">Payment Status</span><div class="value">${escapePrintHtml(formatStatusLabel(request.payment_status || 'unpaid'))}</div></div>
+                        <div class="item"><span class="label">Payment Amount</span><div class="value">${escapePrintHtml(formatCurrency(request.payment_amount))}</div></div>
+                        <div class="item"><span class="label">Payment Reference</span><div class="value">${escapePrintHtml(request.payment_reference || 'No payment reference yet.')}</div></div>
+                        <div class="item full"><span class="label">Purpose</span><div class="value">${escapePrintHtml(request.purpose || '-')}</div></div>
+                        <div class="item full"><span class="label">Additional Notes</span><div class="value">${escapePrintHtml(request.additional_notes || 'No additional notes provided.')}</div></div>
+                        <div class="item"><span class="label">Supporting Document</span><div class="value">${escapePrintHtml(documentLabel)}</div></div>
+                        <div class="item"><span class="label">Ready Document Proof</span><div class="value">${escapePrintHtml(proofLabel)}</div></div>
+                        <div class="item full"><span class="label">Screening Summary</span><div class="value">${escapePrintHtml(request.screening_summary || 'No screening notes yet.')}</div></div>
+                    </div>
+                    <div class="footer">Generated from GayaGuard on ${escapePrintHtml(new Date().toLocaleString('en-US'))}</div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+    }
+
+    function openPrintableDocumentTemplate(request) {
+        if (!request) {
+            return;
+        }
+
+        sessionStorage.setItem('gayaguardPrintRequest', JSON.stringify(request));
+        window.open('print-document.html', '_blank');
+    }
+
     function getAdminViewFromHash() {
         const view = window.location.hash.replace('#', '');
         return ['dashboard', 'requests', 'records', 'residents', 'reports'].includes(view) ? view : 'dashboard';
+    }
+
+    function isArchivedStatus(status) {
+        return ['approved', 'completed', 'rejected'].includes(status);
     }
 
     function setSidebarState(isOpen) {
@@ -221,11 +402,42 @@ document.addEventListener('DOMContentLoaded', function () {
         previewScreeningScore.innerHTML = renderScreeningScore(request.screening_score);
         previewScreeningStatus.textContent = formatStatusLabel(request.screening_status);
         previewScreeningSummary.textContent = request.screening_summary || 'No screening notes yet.';
+        previewPaymentStatus.textContent = formatStatusLabel(request.payment_status || 'unpaid');
+        previewPaymentAmount.textContent = formatCurrency(request.payment_amount);
+        previewPaymentReference.textContent = request.payment_reference || 'No payment reference yet.';
+        previewPaidAt.textContent = request.paid_at ? formatDate(request.paid_at) : 'Not paid yet.';
         previewFinalStatus.textContent = formatStatusLabel(request.final_status);
         previewAdditionalNotes.textContent = request.additional_notes || 'No additional notes provided.';
         previewSupportingDocument.innerHTML = request.supporting_file_name
             ? `<a href="${UPLOADS_BASE_URL}/${request.supporting_file_name}" target="_blank" rel="noopener noreferrer">${request.supporting_file_name}</a>`
             : 'No file uploaded.';
+        if (previewReleaseProof) {
+            previewReleaseProof.innerHTML = request.release_proof_file_name
+                ? `<a href="${UPLOADS_BASE_URL}/${request.release_proof_file_name}" target="_blank" rel="noopener noreferrer">${request.release_proof_file_name}</a>`
+                : 'No proof uploaded yet.';
+        }
+
+        if (paymentStatusInput) {
+            paymentStatusInput.value = request.payment_status || 'unpaid';
+        }
+        if (paymentAmountInput) {
+            paymentAmountInput.value = Number(request.payment_amount) || 0;
+        }
+        if (paymentReferenceInput) {
+            paymentReferenceInput.value = request.payment_reference || '';
+        }
+        if (releaseProofInput) {
+            releaseProofInput.value = '';
+        }
+        if (releaseProofSelected) {
+            releaseProofSelected.innerHTML = '<i class="fas fa-image"></i><span>No proof image selected yet.</span>';
+        }
+        if (printRequestBtn) {
+            printRequestBtn.textContent = ['clearance', 'indigency', 'letter'].includes(request.request_type)
+                ? 'Print Document'
+                : 'Print Summary';
+        }
+        updatePreviewActions(request);
 
         modal.classList.add('active');
         modalOverlay.classList.add('active');
@@ -320,12 +532,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderRecordsTable(requests) {
-        renderRequestRows(recordsBody, requests, 'No approved or rejected records yet.');
+        renderRequestRows(recordsBody, requests, 'No completed or rejected records yet.');
     }
 
     function getArchivedRecords() {
         return allAdminRequests.filter(function (request) {
-            return request.final_status === 'approved' || request.final_status === 'rejected';
+            return isArchivedStatus(request.final_status);
         });
     }
 
@@ -334,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const sortValue = requestSortFilter ? requestSortFilter.value : '';
 
         const activeRequests = allAdminRequests.filter(function (request) {
-            return request.final_status !== 'approved' && request.final_status !== 'rejected';
+            return !isArchivedStatus(request.final_status);
         });
 
         const filteredRequests = activeRequests.filter(function (request) {
@@ -342,11 +554,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return true;
             }
 
-            if (statusValue === 'pending') {
-                return request.final_status === 'pending';
-            }
-
-            return request.screening_status === statusValue;
+            return request.final_status === statusValue || request.screening_status === statusValue;
         });
 
         renderRequestsTable(sortRequests(filteredRequests, sortValue));
@@ -366,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const archivedRecords = sortRequests(getArchivedRecords(), '');
 
         if (!archivedRecords.length) {
-            window.alert('No approved or rejected records available to export yet.');
+            window.alert('No completed or rejected records available to export yet.');
             return;
         }
 
@@ -375,10 +583,14 @@ document.addEventListener('DOMContentLoaded', function () {
             'Request Type',
             'Date Submitted',
             'Date Needed',
+            'Payment Status',
+            'Payment Amount',
+            'Payment Reference',
             'Screening Score',
             'Screening Status',
             'Final Status',
-            'Supporting Document'
+            'Supporting Document',
+            'Release Proof'
         ];
 
         const rows = archivedRecords.map(function (request) {
@@ -387,10 +599,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 formatRequestType(request.request_type),
                 formatDate(request.created_at),
                 formatDate(request.date_needed),
+                formatStatusLabel(request.payment_status || 'unpaid'),
+                Number(request.payment_amount) || 0,
+                request.payment_reference || '',
                 request.screening_score ?? 0,
                 formatStatusLabel(request.screening_status),
                 formatStatusLabel(request.final_status),
-                request.supporting_file_name || ''
+                request.supporting_file_name || '',
+                request.release_proof_file_name || ''
             ].map(escapeCsvValue).join(',');
         });
 
@@ -505,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span class="admin-dashboard-note-icon"><i class="fas fa-clock"></i></span>
                     <div>
                         <strong>No recent decisions yet</strong>
-                        <span>Approved and rejected activity will appear here once requests are resolved.</span>
+                        <span>Completed and rejected activity will appear here once requests are resolved.</span>
                     </div>
                 </li>
             `;
@@ -514,12 +730,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         decisions.forEach(function (decision) {
             const item = document.createElement('li');
-            const decisionIcon = decision.final_status === 'approved' ? 'fa-check-circle' : 'fa-times-circle';
+            const decisionIcon = decision.final_status === 'rejected' ? 'fa-times-circle' : 'fa-check-circle';
+            const decisionText = decision.final_status === 'rejected' ? 'Rejected' : 'Completed';
             item.innerHTML = `
                 <span class="admin-dashboard-note-icon"><i class="fas ${decisionIcon}"></i></span>
                 <div>
                     <strong>${decision.full_name} • ${formatRequestType(decision.request_type)}</strong>
-                    <span>${formatStatusLabel(decision.final_status)} on ${formatDate(decision.reviewed_at)}</span>
+                    <span>${decisionText} on ${formatDate(decision.reviewed_at)}</span>
                 </div>
             `;
             reportRecentDecisions.appendChild(item);
@@ -550,10 +767,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 statTotalRequests.textContent = data.summary.total_requests ?? 0;
             }
             if (statPendingRequests) {
-                statPendingRequests.textContent = data.summary.pending_requests ?? 0;
+                statPendingRequests.textContent = data.summary.active_requests ?? 0;
             }
             if (statApprovedRequests) {
-                statApprovedRequests.textContent = data.summary.approved_requests ?? 0;
+                statApprovedRequests.textContent = data.summary.ready_for_pickup_requests ?? 0;
             }
             if (statRejectedRequests) {
                 statRejectedRequests.textContent = data.summary.rejected_requests ?? 0;
@@ -567,7 +784,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (adminOverviewText) {
                 adminOverviewText.textContent = recentRequests.length
-                    ? `There are ${data.summary.pending_requests ?? 0} pending requests and ${data.summary.needs_review ?? 0} items currently marked for review in the system.`
+                    ? `There are ${data.summary.active_requests ?? 0} active requests, ${data.summary.ready_for_pickup_requests ?? 0} ready for pickup, and ${data.summary.needs_review ?? 0} items currently under review.`
                     : 'Track live request volume, review priorities, and recent resident activity from one place.';
             }
 
@@ -671,13 +888,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 reportTotalThisMonth.textContent = data.monthlySummary?.total_this_month ?? 0;
             }
             if (reportApprovedThisMonth) {
-                reportApprovedThisMonth.textContent = data.monthlySummary?.approved_this_month ?? 0;
+                reportApprovedThisMonth.textContent = data.monthlySummary?.completed_this_month ?? 0;
             }
             if (reportRejectedThisMonth) {
                 reportRejectedThisMonth.textContent = data.monthlySummary?.rejected_this_month ?? 0;
             }
             if (reportPendingThisMonth) {
-                reportPendingThisMonth.textContent = data.monthlySummary?.pending_this_month ?? 0;
+                reportPendingThisMonth.textContent = data.monthlySummary?.active_this_month ?? 0;
             }
 
             renderBreakdownList(
@@ -732,15 +949,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const actionButtonMap = {
-            approve: approveRequestBtn,
+            start_review: reviewRequestBtn,
+            prepare_document: prepareRequestBtn,
+            mark_ready: readyRequestBtn,
+            complete: approveRequestBtn,
             reject: rejectRequestBtn,
+            approve: approveRequestBtn,
             review: reviewRequestBtn
         };
         const activeButton = actionButtonMap[action];
         const loadingLabelMap = {
-            approve: 'Approving...',
+            start_review: 'Starting Review...',
+            prepare_document: 'Preparing...',
+            mark_ready: 'Marking Ready...',
+            complete: 'Completing...',
             reject: 'Rejecting...',
-            review: 'Saving Review...'
+            approve: 'Completing...',
+            review: 'Starting Review...'
         };
 
         Object.values(actionButtonMap).forEach(function (button) {
@@ -772,8 +997,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(data.message || 'Unable to update request.');
             }
 
-            closePreview();
             await Promise.all([loadDashboardData(), loadAllRequestsData(), loadReportsData()]);
+            const refreshedRequest = allAdminRequests.find(function (request) {
+                return request.id === selectedRequest.id;
+            });
+
+            if (refreshedRequest) {
+                selectedRequest = refreshedRequest;
+                openPreview(refreshedRequest);
+            }
         } catch (error) {
             window.alert(error.message || 'Unable to update request.');
         } finally {
@@ -789,6 +1021,92 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 button.disabled = false;
             });
+        }
+    }
+
+    async function updateRequestPayment() {
+        const token = window.getAuthToken ? window.getAuthToken() : localStorage.getItem('authToken');
+
+        if (!token || !selectedRequest || !savePaymentBtn) {
+            return;
+        }
+
+        setActionButtonLoading(savePaymentBtn, true, 'Saving Payment...');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/requests/${selectedRequest.id}/payment`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    paymentStatus: paymentStatusInput ? paymentStatusInput.value : 'unpaid',
+                    paymentAmount: paymentAmountInput ? paymentAmountInput.value : 0,
+                    paymentReference: paymentReferenceInput ? paymentReferenceInput.value : ''
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Unable to update payment details.');
+            }
+
+            await Promise.all([loadDashboardData(), loadAllRequestsData(), loadReportsData()]);
+
+            if (selectedRequest) {
+                selectedRequest.payment_status = data.request.payment_status;
+                selectedRequest.payment_amount = data.request.payment_amount;
+                selectedRequest.payment_reference = data.request.payment_reference;
+                selectedRequest.paid_at = data.request.paid_at;
+                openPreview(selectedRequest);
+            }
+        } catch (error) {
+            window.alert(error.message || 'Unable to update payment details.');
+        } finally {
+            setActionButtonLoading(savePaymentBtn, false);
+        }
+    }
+
+    async function updateRequestReleaseProof() {
+        const token = window.getAuthToken ? window.getAuthToken() : localStorage.getItem('authToken');
+
+        if (!token || !selectedRequest || !saveReleaseProofBtn || !releaseProofInput || !releaseProofInput.files.length) {
+            window.alert('Please choose a proof image first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('releaseProof', releaseProofInput.files[0]);
+
+        setActionButtonLoading(saveReleaseProofBtn, true, 'Uploading Proof...');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/requests/${selectedRequest.id}/release-proof`, {
+                method: 'PATCH',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Unable to upload release proof.');
+            }
+
+            await Promise.all([loadDashboardData(), loadAllRequestsData(), loadReportsData()]);
+
+            if (selectedRequest) {
+                selectedRequest.release_proof_file_name = data.request.release_proof_file_name;
+                openPreview(selectedRequest);
+            }
+        } catch (error) {
+            window.alert(error.message || 'Unable to upload release proof.');
+        } finally {
+            setActionButtonLoading(saveReleaseProofBtn, false);
         }
     }
 
@@ -854,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (approveRequestBtn) {
         approveRequestBtn.addEventListener('click', function () {
-            updateRequestStatus('approve');
+            updateRequestStatus('complete');
         });
     }
 
@@ -866,7 +1184,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (reviewRequestBtn) {
         reviewRequestBtn.addEventListener('click', function () {
-            updateRequestStatus('review');
+            updateRequestStatus('start_review');
+        });
+    }
+
+    if (prepareRequestBtn) {
+        prepareRequestBtn.addEventListener('click', function () {
+            updateRequestStatus('prepare_document');
+        });
+    }
+
+    if (readyRequestBtn) {
+        readyRequestBtn.addEventListener('click', function () {
+            updateRequestStatus('mark_ready');
+        });
+    }
+
+    if (savePaymentBtn) {
+        savePaymentBtn.addEventListener('click', updateRequestPayment);
+    }
+
+    if (releaseProofInput && releaseProofSelected) {
+        releaseProofInput.addEventListener('change', function () {
+            const nextFile = releaseProofInput.files && releaseProofInput.files[0];
+            releaseProofSelected.innerHTML = nextFile
+                ? `<i class="fas fa-image"></i><span>${nextFile.name}</span>`
+                : '<i class="fas fa-image"></i><span>No proof image selected yet.</span>';
+        });
+    }
+
+    if (saveReleaseProofBtn) {
+        saveReleaseProofBtn.addEventListener('click', updateRequestReleaseProof);
+    }
+
+    if (printRequestBtn) {
+        printRequestBtn.addEventListener('click', function () {
+            if (!selectedRequest) {
+                return;
+            }
+
+            if (['clearance', 'indigency', 'letter'].includes(selectedRequest.request_type)) {
+                openPrintableDocumentTemplate(selectedRequest);
+                return;
+            }
+
+            openPrintableSummary(selectedRequest, { statusTitle: 'Processing Status' });
         });
     }
 

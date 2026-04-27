@@ -111,17 +111,17 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-value" id="statPendingRequests">0</div>
-                            <div class="stat-label">Pending Requests</div>
+                            <div class="stat-label">Active Requests</div>
                         </div>
                     </div>
 
                     <div class="stat-card stat-approved">
                         <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-box-open"></i>
                         </div>
                         <div class="stat-content">
                             <div class="stat-value" id="statApprovedRequests">0</div>
-                            <div class="stat-label">Approved Requests</div>
+                            <div class="stat-label">Ready for Pickup</div>
                         </div>
                     </div>
 
@@ -192,17 +192,17 @@
                                 </div>
                             </li>
                             <li>
-                                <span class="admin-dashboard-note-icon"><i class="fas fa-check-circle"></i></span>
+                                <span class="admin-dashboard-note-icon"><i class="fas fa-file-signature"></i></span>
                                 <div>
-                                    <strong>Keep approval decisions moving</strong>
-                                    <span>Open the Requests section to process records quickly and consistently.</span>
+                                    <strong>Move requests through the process</strong>
+                                    <span>Use the request actions to move records from review to document preparation and release.</span>
                                 </div>
                             </li>
                             <li>
                                 <span class="admin-dashboard-note-icon"><i class="fas fa-folder-open"></i></span>
                                 <div>
-                                    <strong>Maintain organized request records</strong>
-                                    <span>Regularly review the request list to avoid backlog growth.</span>
+                                    <strong>Keep active and finished records organized</strong>
+                                    <span>Regularly move released or rejected requests out of the active workspace.</span>
                                 </div>
                             </li>
                         </ul>
@@ -215,18 +215,20 @@
                     <div class="admin-overview-copy">
                         <span class="admin-overview-eyebrow">Request Management</span>
                         <h1>Requests</h1>
-                        <p>Review active request records that are still pending screening, under review, or waiting for a final decision.</p>
+                        <p>Review active request records that are still being processed, prepared, or waiting for pickup.</p>
                     </div>
                 </div>
 
                 <div class="filter-bar">
                     <select class="filter-select" id="adminRequestStatusFilter">
                         <option value="">All Active Requests</option>
-                        <option value="pending">Pending</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="preparing_document">Preparing Document</option>
+                        <option value="ready_for_pickup">Ready for Pickup</option>
                         <option value="pending_screening">Pending Screening</option>
                         <option value="needs_review">Needs Review</option>
                         <option value="low_concern">Low Concern</option>
-                        <option value="high_concern">High Concern</option>
                     </select>
 
                     <select class="filter-select" id="adminRequestSortFilter">
@@ -275,14 +277,14 @@
                     <div class="admin-overview-copy">
                         <span class="admin-overview-eyebrow">Archived Decisions</span>
                         <h1>Records</h1>
-                        <p>Browse approved and rejected requests that already have a final decision on file.</p>
+                        <p>Browse completed and rejected requests that already have a final processing result on file.</p>
                     </div>
                 </div>
 
                 <div class="dashboard-grid">
                     <div class="table-panel">
                         <div class="panel-header">
-                            <h3>Approved and Rejected Records</h3>
+                            <h3>Completed and Rejected Records</h3>
                         </div>
                         <div class="table-container">
                             <table class="request-table">
@@ -364,11 +366,11 @@
 
                     <div class="stat-card stat-approved">
                         <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-box-open"></i>
                         </div>
                         <div class="stat-content">
                             <div class="stat-value" id="reportApprovedThisMonth">0</div>
-                            <div class="stat-label">Approved This Month</div>
+                            <div class="stat-label">Completed This Month</div>
                         </div>
                     </div>
 
@@ -388,7 +390,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-value" id="reportPendingThisMonth">0</div>
-                            <div class="stat-label">Pending This Month</div>
+                            <div class="stat-label">Active This Month</div>
                         </div>
                     </div>
                 </div>
@@ -503,7 +505,23 @@
                 <div class="preview-value" id="previewScreeningSummary">No screening notes yet.</div>
             </div>
             <div class="preview-row">
-                <div class="preview-label">Final Status</div>
+                <div class="preview-label">Payment Status</div>
+                <div class="preview-value" id="previewPaymentStatus">Unpaid</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Payment Amount</div>
+                <div class="preview-value" id="previewPaymentAmount">₱0.00</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Payment Reference</div>
+                <div class="preview-value" id="previewPaymentReference">No payment reference yet.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Paid At</div>
+                <div class="preview-value" id="previewPaidAt">Not paid yet.</div>
+            </div>
+            <div class="preview-row">
+                <div class="preview-label">Processing Status</div>
                 <div class="preview-value" id="previewFinalStatus">-</div>
             </div>
             <div class="preview-row">
@@ -514,11 +532,44 @@
                 <div class="preview-label">Supporting Document</div>
                 <div class="preview-value" id="previewSupportingDocument">No file uploaded.</div>
             </div>
+            <div class="preview-row">
+                <div class="preview-label">Ready Document Proof</div>
+                <div class="preview-value" id="previewReleaseProof">No proof uploaded yet.</div>
+            </div>
 
+            <div class="preview-row preview-payment-row">
+                <div class="preview-label">Payment Controls</div>
+                <div class="preview-payment-controls">
+                    <select class="filter-select" id="paymentStatusInput">
+                        <option value="unpaid">Unpaid</option>
+                        <option value="pending_verification">Pending Verification</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                    <input type="number" class="form-input" id="paymentAmountInput" min="0" step="0.01" placeholder="Amount">
+                    <input type="text" class="form-input" id="paymentReferenceInput" maxlength="120" placeholder="Reference / OR No.">
+                    <button class="btn btn-primary" id="savePaymentBtn" type="button">Save Payment</button>
+                </div>
+            </div>
+            <div class="preview-row preview-payment-row">
+                <div class="preview-label">Release Proof Upload</div>
+                <div class="preview-payment-controls preview-proof-controls">
+                    <input type="file" class="form-input" id="releaseProofInput" accept=".jpg,.jpeg,.png">
+                    <div class="file-upload-selected preview-file-selected" id="releaseProofSelected">
+                        <i class="fas fa-image"></i>
+                        <span>No proof image selected yet.</span>
+                    </div>
+                    <button class="btn btn-primary" id="saveReleaseProofBtn" type="button">Upload Proof</button>
+                </div>
+            </div>
+
+            <div class="preview-action-guide" id="previewActionGuide">Choose the next processing step for this request.</div>
             <div class="preview-actions">
-                <button class="btn btn-success" id="approveRequestBtn">Approve</button>
+                <button class="btn btn-secondary" id="printRequestBtn" type="button">Print Summary</button>
+                <button class="btn btn-secondary" id="reviewRequestBtn">Start Review</button>
+                <button class="btn btn-primary" id="prepareRequestBtn">Prepare Document</button>
+                <button class="btn btn-success" id="readyRequestBtn">Mark Ready</button>
+                <button class="btn btn-success" id="approveRequestBtn">Complete</button>
                 <button class="btn btn-danger" id="rejectRequestBtn">Reject</button>
-                <button class="btn btn-secondary" id="reviewRequestBtn">Mark for Review</button>
             </div>
         </div>
     </div>

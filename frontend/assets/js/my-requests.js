@@ -36,6 +36,14 @@ function formatResidentDate(value) {
   });
 }
 
+function formatResidentCurrency(value) {
+  const amount = Number(value) || 0;
+  return new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP'
+  }).format(amount);
+}
+
 function renderResidentScreeningScore(score) {
   const normalizedScore = Number(score) || 0;
   const percentage = Math.max(0, Math.min(100, Math.round((normalizedScore / 12) * 100)));
@@ -73,6 +81,110 @@ function getResidentBadgeClass(type, value) {
   return `status-${value}`;
 }
 
+function isResidentArchivedStatus(status) {
+  return ['approved', 'completed', 'rejected'].includes(status);
+}
+
+function escapeResidentPrintHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function openResidentPrintableSummary(request) {
+  const printWindow = window.open('', '_blank', 'width=900,height=700');
+
+  if (!printWindow) {
+    window.alert('Please allow popups first so the print summary can open.');
+    return;
+  }
+
+  const proofLabel = request.release_proof_file_name ? request.release_proof_file_name : 'No proof uploaded yet.';
+  const documentLabel = request.supporting_file_name ? request.supporting_file_name : 'No file uploaded.';
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>GayaGuard - Request Summary</title>
+      <style>
+        body { font-family: Arial, sans-serif; color: #1f2937; margin: 32px; }
+        .sheet { max-width: 820px; margin: 0 auto; }
+        .brand { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #176b4d; }
+        .brand small { display: block; color: #176b4d; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+        .brand h1 { margin: 0 0 8px; font-size: 30px; color: #0f4f39; }
+        .brand p { margin: 0; color: #475569; line-height: 1.6; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+        .item { border: 1px solid #dbe7e0; border-radius: 14px; padding: 14px 16px; background: #fbfdfb; }
+        .item.full { grid-column: 1 / -1; }
+        .label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
+        .value { font-size: 15px; line-height: 1.7; color: #0f172a; word-break: break-word; }
+        .footer { margin-top: 24px; font-size: 12px; color: #64748b; }
+        @media print {
+          body { margin: 0; }
+          .sheet { max-width: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="sheet">
+        <div class="brand">
+          <small>GayaGuard</small>
+          <h1>Request Summary</h1>
+          <p>Barangay Gaya Gaya Request Screening and Monitoring System</p>
+        </div>
+        <div class="grid">
+          <div class="item"><span class="label">Resident Name</span><div class="value">${escapeResidentPrintHtml(request.full_name || '-')}</div></div>
+          <div class="item"><span class="label">Request Type</span><div class="value">${escapeResidentPrintHtml(formatResidentRequestType(request.request_type))}</div></div>
+          <div class="item"><span class="label">Date Submitted</span><div class="value">${escapeResidentPrintHtml(formatResidentDate(request.created_at))}</div></div>
+          <div class="item"><span class="label">Date Needed</span><div class="value">${escapeResidentPrintHtml(formatResidentDate(request.date_needed))}</div></div>
+          <div class="item"><span class="label">Screening Score</span><div class="value">${escapeResidentPrintHtml(`${getResidentScorePercentage(request.screening_score)}% (${Number(request.screening_score) || 0} pts)`)}</div></div>
+          <div class="item"><span class="label">Screening Status</span><div class="value">${escapeResidentPrintHtml(formatResidentStatus(request.screening_status))}</div></div>
+          <div class="item"><span class="label">Processing Status</span><div class="value">${escapeResidentPrintHtml(formatResidentStatus(request.final_status))}</div></div>
+          <div class="item"><span class="label">Payment Status</span><div class="value">${escapeResidentPrintHtml(formatResidentStatus(request.payment_status || 'unpaid'))}</div></div>
+          <div class="item"><span class="label">Payment Amount</span><div class="value">${escapeResidentPrintHtml(formatResidentCurrency(request.payment_amount))}</div></div>
+          <div class="item"><span class="label">Payment Reference</span><div class="value">${escapeResidentPrintHtml(request.payment_reference || 'No payment reference yet.')}</div></div>
+          <div class="item full"><span class="label">Purpose</span><div class="value">${escapeResidentPrintHtml(request.purpose || '-')}</div></div>
+          <div class="item full"><span class="label">Complete Address</span><div class="value">${escapeResidentPrintHtml(request.complete_address || '-')}</div></div>
+          <div class="item full"><span class="label">Additional Notes</span><div class="value">${escapeResidentPrintHtml(request.additional_notes || 'No additional notes provided.')}</div></div>
+          <div class="item"><span class="label">Supporting Document</span><div class="value">${escapeResidentPrintHtml(documentLabel)}</div></div>
+          <div class="item"><span class="label">Ready Document Proof</span><div class="value">${escapeResidentPrintHtml(proofLabel)}</div></div>
+          <div class="item full"><span class="label">Screening Summary</span><div class="value">${escapeResidentPrintHtml(request.screening_summary || 'No screening notes yet.')}</div></div>
+        </div>
+        <div class="footer">Generated from GayaGuard on ${escapeResidentPrintHtml(new Date().toLocaleString('en-US'))}</div>
+      </div>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
+function openResidentPrintableDocumentTemplate(request) {
+  if (!request) {
+    return;
+  }
+
+  sessionStorage.setItem('gayaguardPrintRequest', JSON.stringify(request));
+  window.open('print-document.html', '_blank');
+}
+
+function getResidentPaymentPriority(requests) {
+  const activeRequests = requests.filter(request => !isResidentArchivedStatus(request.final_status));
+  const sorted = [...activeRequests].sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
+
+  return sorted.find(request => ['unpaid', 'pending_verification'].includes(request.payment_status) && Number(request.payment_amount) > 0)
+    || sorted.find(request => request.payment_status === 'paid' && Number(request.payment_amount) > 0)
+    || sorted.find(request => request.payment_status && request.payment_status !== 'unpaid')
+    || sorted.find(request => Number(request.payment_amount) > 0)
+    || null;
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
   const sidebar = document.getElementById('residentSidebar');
   const overlay = document.getElementById('residentSidebarOverlay');
@@ -106,6 +218,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   const recentRequestTypeEl = document.getElementById('residentRecentRequestType');
   const latestFinalStatusEl = document.getElementById('residentLatestFinalStatus');
   const latestScreeningStatusEl = document.getElementById('residentLatestScreeningStatus');
+  const paymentAlert = document.getElementById('residentPaymentAlert');
+  const paymentAlertTitle = document.getElementById('residentPaymentAlertTitle');
+  const paymentAlertText = document.getElementById('residentPaymentAlertText');
+  const paymentAlertAmount = document.getElementById('residentPaymentAlertAmount');
   const modal = document.getElementById('residentRequestModal');
   const modalOverlay = document.getElementById('residentRequestModalOverlay');
   const modalClose = document.getElementById('residentModalClose');
@@ -118,13 +234,20 @@ document.addEventListener('DOMContentLoaded', async function () {
   const modalScreeningScore = document.getElementById('residentModalScreeningScore');
   const modalScreeningStatus = document.getElementById('residentModalScreeningStatus');
   const modalScreeningSummary = document.getElementById('residentModalScreeningSummary');
+  const modalPaymentStatus = document.getElementById('residentModalPaymentStatus');
+  const modalPaymentAmount = document.getElementById('residentModalPaymentAmount');
+  const modalPaymentReference = document.getElementById('residentModalPaymentReference');
+  const modalPaidAt = document.getElementById('residentModalPaidAt');
   const modalFinalStatus = document.getElementById('residentModalFinalStatus');
   const modalAdditionalNotes = document.getElementById('residentModalAdditionalNotes');
   const modalSupportingDocument = document.getElementById('residentModalSupportingDocument');
+  const modalReleaseProof = document.getElementById('residentModalReleaseProof');
+  const residentPrintRequestBtn = document.getElementById('residentPrintRequestBtn');
   const token = window.getAuthToken ? window.getAuthToken() : localStorage.getItem('authToken');
   const storedUser = window.getStoredAuthUser ? window.getStoredAuthUser() : null;
   const rawUser = storedUser ? JSON.stringify(storedUser) : localStorage.getItem('authUser');
   let currentResidentView = 'dashboard';
+  let selectedResidentRequest = null;
 
   function getResidentViewFromHash() {
     if (window.location.hash === '#submit-request') {
@@ -200,6 +323,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     modal.classList.remove('active');
     modalOverlay.classList.remove('active');
     document.body.classList.remove('modal-open');
+    selectedResidentRequest = null;
   }
 
   function setResidentView(nextView, options = {}) {
@@ -248,6 +372,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       return;
     }
 
+    selectedResidentRequest = request;
     modalRequestType.textContent = formatResidentRequestType(request.request_type);
     modalCreatedAt.textContent = formatResidentDate(request.created_at);
     modalDateNeeded.textContent = formatResidentDate(request.date_needed);
@@ -257,11 +382,25 @@ document.addEventListener('DOMContentLoaded', async function () {
     modalScreeningScore.innerHTML = renderResidentScreeningScore(request.screening_score);
     modalScreeningStatus.textContent = formatResidentStatus(request.screening_status);
     modalScreeningSummary.textContent = request.screening_summary || 'No screening notes yet.';
+    modalPaymentStatus.textContent = formatResidentStatus(request.payment_status || 'unpaid');
+    modalPaymentAmount.textContent = formatResidentCurrency(request.payment_amount);
+    modalPaymentReference.textContent = request.payment_reference || 'No payment reference yet.';
+    modalPaidAt.textContent = request.paid_at ? formatResidentDate(request.paid_at) : 'Not paid yet.';
     modalFinalStatus.textContent = formatResidentStatus(request.final_status);
     modalAdditionalNotes.textContent = request.additional_notes || 'No additional notes provided.';
     modalSupportingDocument.innerHTML = request.supporting_file_name
       ? `<a href="${MY_REQUESTS_UPLOADS_BASE_URL}/${request.supporting_file_name}" target="_blank" rel="noopener noreferrer">${request.supporting_file_name}</a>`
       : 'No file uploaded.';
+    if (modalReleaseProof) {
+      modalReleaseProof.innerHTML = request.release_proof_file_name
+        ? `<a href="${MY_REQUESTS_UPLOADS_BASE_URL}/${request.release_proof_file_name}" target="_blank" rel="noopener noreferrer">${request.release_proof_file_name}</a>`
+        : 'No proof uploaded yet.';
+    }
+    if (residentPrintRequestBtn) {
+      residentPrintRequestBtn.textContent = ['clearance', 'indigency', 'letter'].includes(request.request_type)
+        ? 'Print Document'
+        : 'Print Summary';
+    }
 
     modal.classList.add('active');
     modalOverlay.classList.add('active');
@@ -362,6 +501,31 @@ document.addEventListener('DOMContentLoaded', async function () {
     modalClose.addEventListener('click', closeResidentModal);
   }
 
+  if (residentPrintRequestBtn) {
+    residentPrintRequestBtn.addEventListener('click', function () {
+      if (!selectedResidentRequest) {
+        return;
+      }
+
+      if (['clearance', 'indigency', 'letter'].includes(selectedResidentRequest.request_type)) {
+        openResidentPrintableDocumentTemplate(selectedResidentRequest);
+        return;
+      }
+
+      openResidentPrintableSummary(selectedResidentRequest);
+    });
+  }
+
+  window.addEventListener('focus', function () {
+    loadResidentRequests();
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+      loadResidentRequests();
+    }
+  });
+
   window.addEventListener('resize', function () {
     if (window.innerWidth > 1024) {
       setSidebarState(false);
@@ -443,8 +607,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
 
       const requests = data.requests || [];
-      const pendingCount = requests.filter(request => request.final_status === 'pending').length;
-      const approvedCount = requests.filter(request => request.final_status === 'approved').length;
+      const pendingCount = requests.filter(request => !isResidentArchivedStatus(request.final_status)).length;
+      const approvedCount = requests.filter(request => ['approved', 'completed'].includes(request.final_status)).length;
       const rejectedCount = requests.filter(request => request.final_status === 'rejected').length;
 
       if (totalRequestsEl) {
@@ -477,11 +641,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       if (overviewText) {
         overviewText.textContent = requests.length
-          ? `You currently have ${pendingCount} pending request${pendingCount === 1 ? '' : 's'} and ${approvedCount} approved request${approvedCount === 1 ? '' : 's'} in your account history.`
+          ? `You currently have ${pendingCount} active request${pendingCount === 1 ? '' : 's'} and ${approvedCount} completed request${approvedCount === 1 ? '' : 's'} in your account history.`
           : 'Track your current request activity and use the shortcuts below to continue your transactions.';
       }
 
       const latestRequest = requests[0] || null;
+      const paymentPriorityRequest = getResidentPaymentPriority(requests);
 
       if (recentRequestTypeEl) {
         recentRequestTypeEl.textContent = latestRequest
@@ -507,7 +672,25 @@ document.addEventListener('DOMContentLoaded', async function () {
           : 'No updates yet';
       }
 
+      if (paymentAlert && paymentAlertTitle && paymentAlertText && paymentAlertAmount) {
+        if (paymentPriorityRequest) {
+          const requestLabel = formatResidentRequestType(paymentPriorityRequest.request_type);
+          const paymentStatus = formatResidentStatus(paymentPriorityRequest.payment_status || 'unpaid');
+          paymentAlert.hidden = false;
+          paymentAlertTitle.textContent = `${requestLabel} - ${paymentStatus}`;
+          paymentAlertText.textContent = paymentPriorityRequest.payment_status === 'paid'
+            ? 'A payment has already been recorded for this request. You can still review the full payment details inside the request modal.'
+            : `The barangay set a payment update for this request. Open My Requests to review the amount${paymentPriorityRequest.payment_reference ? ` and reference ${paymentPriorityRequest.payment_reference}` : ''}.`;
+          paymentAlertAmount.textContent = formatResidentCurrency(paymentPriorityRequest.payment_amount);
+        } else {
+          paymentAlert.hidden = true;
+        }
+      }
+
       if (!requests.length) {
+        if (paymentAlert) {
+          paymentAlert.hidden = true;
+        }
         emptyEl.style.display = 'flex';
         listEl.innerHTML = '';
         return;
@@ -517,6 +700,9 @@ document.addEventListener('DOMContentLoaded', async function () {
       listEl.innerHTML = '';
 
       requests.forEach(request => {
+        const paymentLabel = Number(request.payment_amount) > 0
+          ? `${formatResidentStatus(request.payment_status || 'unpaid')} - ${formatResidentCurrency(request.payment_amount)}`
+          : formatResidentStatus(request.payment_status || 'unpaid');
         const card = document.createElement('article');
         card.className = 'resident-request-card';
         card.innerHTML = `
@@ -548,6 +734,13 @@ document.addEventListener('DOMContentLoaded', async function () {
               <p class="resident-request-meta-file">${request.supporting_file_name ? `<a href="${MY_REQUESTS_UPLOADS_BASE_URL}/${request.supporting_file_name}" target="_blank" rel="noopener noreferrer">${request.supporting_file_name}</a>` : 'None uploaded'}</p>
             </div>
           </div>
+          <div class="resident-request-meta-item">
+            <span class="resident-request-meta-icon"><i class="fas fa-receipt"></i></span>
+            <div>
+              <span class="resident-request-detail-label">Payment</span>
+              <p>${paymentLabel}</p>
+            </div>
+          </div>
         </div>
         <div class="resident-request-body">
           <div class="resident-request-meta-item resident-request-summary-item">
@@ -567,6 +760,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           </div>
         </div>
         <div class="resident-request-footer">
+          ${request.release_proof_file_name ? '<span class="resident-request-proof-flag"><i class="fas fa-image"></i> Ready proof uploaded</span>' : ''}
           <span class="resident-request-link-hint">Tap to view full request details</span>
         </div>
       `;
@@ -578,6 +772,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         listEl.appendChild(card);
       });
     } catch (error) {
+      if (paymentAlert) {
+        paymentAlert.hidden = true;
+      }
       emptyEl.style.display = 'flex';
       listEl.innerHTML = '';
     }
@@ -586,4 +783,5 @@ document.addEventListener('DOMContentLoaded', async function () {
   setResidentView(getResidentViewFromHash(), { skipHashUpdate: true });
 
   await loadResidentRequests();
+  window.setInterval(loadResidentRequests, 20000);
 });

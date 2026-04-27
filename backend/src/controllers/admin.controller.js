@@ -6,8 +6,9 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     pool.query(`
       SELECT
         COUNT(*)::int AS total_requests,
-        COUNT(*) FILTER (WHERE final_status = 'pending')::int AS pending_requests,
-        COUNT(*) FILTER (WHERE final_status = 'approved')::int AS approved_requests,
+        COUNT(*) FILTER (WHERE final_status IN ('pending', 'submitted', 'under_review', 'preparing_document', 'ready_for_pickup'))::int AS active_requests,
+        COUNT(*) FILTER (WHERE final_status = 'ready_for_pickup')::int AS ready_for_pickup_requests,
+        COUNT(*) FILTER (WHERE final_status IN ('approved', 'completed'))::int AS completed_requests,
         COUNT(*) FILTER (WHERE final_status = 'rejected')::int AS rejected_requests,
         COUNT(*) FILTER (WHERE screening_status = 'needs_review')::int AS needs_review
       FROM requests
@@ -24,6 +25,11 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
         screening_score,
         screening_summary,
         screening_status,
+        payment_status,
+        payment_amount,
+        payment_reference,
+        paid_at,
+        release_proof_file_name,
         final_status,
         created_at
       FROM requests
@@ -52,6 +58,11 @@ const getAllRequests = asyncHandler(async (req, res) => {
       screening_score,
       screening_summary,
       screening_status,
+      payment_status,
+      payment_amount,
+      payment_reference,
+      paid_at,
+      release_proof_file_name,
       final_status,
       created_at,
       updated_at
@@ -100,9 +111,9 @@ const getReportsSummary = asyncHandler(async (req, res) => {
     pool.query(`
       SELECT
         COUNT(*)::int AS total_this_month,
-        COUNT(*) FILTER (WHERE final_status = 'approved')::int AS approved_this_month,
+        COUNT(*) FILTER (WHERE final_status IN ('approved', 'completed'))::int AS completed_this_month,
         COUNT(*) FILTER (WHERE final_status = 'rejected')::int AS rejected_this_month,
-        COUNT(*) FILTER (WHERE final_status = 'pending')::int AS pending_this_month
+        COUNT(*) FILTER (WHERE final_status IN ('pending', 'submitted', 'under_review', 'preparing_document', 'ready_for_pickup'))::int AS active_this_month
       FROM requests
       WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', NOW())
     `),
@@ -141,7 +152,7 @@ const getReportsSummary = asyncHandler(async (req, res) => {
         final_status,
         reviewed_at
       FROM requests
-      WHERE final_status IN ('approved', 'rejected')
+      WHERE final_status IN ('approved', 'completed', 'rejected')
       ORDER BY reviewed_at DESC NULLS LAST, updated_at DESC
       LIMIT 5
     `)
@@ -162,17 +173,33 @@ const updateRequestStatus = asyncHandler(async (req, res) => {
   const { action } = req.body;
 
   const actionMap = {
-    approve: {
-      screening_status: 'low_concern',
-      final_status: 'approved'
+    start_review: {
+      screening_status: 'needs_review',
+      final_status: 'under_review'
     },
     reject: {
       screening_status: 'high_concern',
       final_status: 'rejected'
     },
+    prepare_document: {
+      screening_status: 'low_concern',
+      final_status: 'preparing_document'
+    },
+    mark_ready: {
+      screening_status: 'low_concern',
+      final_status: 'ready_for_pickup'
+    },
+    complete: {
+      screening_status: 'low_concern',
+      final_status: 'completed'
+    },
+    approve: {
+      screening_status: 'low_concern',
+      final_status: 'completed'
+    },
     review: {
       screening_status: 'needs_review',
-      final_status: 'pending'
+      final_status: 'under_review'
     }
   };
 
@@ -180,6 +207,30 @@ const updateRequestStatus = asyncHandler(async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'Invalid request action.'
+    });
+  }
+
+  const existingRequestResult = await pool.query(
+    `SELECT id, payment_status, payment_amount, final_status
+     FROM requests
+     WHERE id = $1`,
+    [id]
+  );
+
+  if (existingRequestResult.rows.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: 'Request not found.'
+    });
+  }
+
+  const existingRequest = existingRequestResult.rows[0];
+  const hasOutstandingPayment = Number(existingRequest.payment_amount) > 0 && existingRequest.payment_status !== 'paid';
+
+  if (action === 'complete' && hasOutstandingPayment) {
+    return res.status(400).json({
+      success: false,
+      message: 'This request cannot be completed until the payment is marked as paid.'
     });
   }
 
@@ -214,4 +265,99 @@ const updateRequestStatus = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getAllRequests, getDashboardSummary, getResidentsList, getReportsSummary, updateRequestStatus };
+const updateRequestPayment = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { paymentStatus, paymentAmount, paymentReference } = req.body;
+  const allowedStatuses = ['unpaid', 'pending_verification', 'paid'];
+
+  if (!allowedStatuses.includes(paymentStatus)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid payment status.'
+    });
+  }
+
+  const normalizedAmount = Number(paymentAmount);
+
+  if (!Number.isFinite(normalizedAmount) || normalizedAmount < 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Payment amount must be a valid non-negative number.'
+    });
+  }
+
+  const normalizedReference = paymentReference ? String(paymentReference).trim() : null;
+
+  if (normalizedReference && normalizedReference.length > 120) {
+    return res.status(400).json({
+      success: false,
+      message: 'Payment reference is too long.'
+    });
+  }
+
+  const result = await pool.query(
+    `UPDATE requests
+     SET payment_status = $1::varchar,
+         payment_amount = $2,
+         payment_reference = $3,
+         paid_at = CASE WHEN $1::varchar = 'paid' THEN NOW() ELSE NULL END,
+         updated_at = NOW()
+     WHERE id = $4
+     RETURNING id, payment_status, payment_amount, payment_reference, paid_at`,
+    [
+      paymentStatus,
+      normalizedAmount,
+      normalizedReference,
+      id
+    ]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: 'Request not found.'
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Payment details updated successfully.',
+    request: result.rows[0]
+  });
+});
+
+const updateRequestReleaseProof = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const uploadedFileName = req.file ? req.file.filename : null;
+
+  if (!uploadedFileName) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please upload a proof image first.'
+    });
+  }
+
+  const result = await pool.query(
+    `UPDATE requests
+     SET release_proof_file_name = $1,
+         updated_at = NOW()
+     WHERE id = $2
+     RETURNING id, release_proof_file_name, final_status`,
+    [uploadedFileName, id]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: 'Request not found.'
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Ready-for-pickup proof uploaded successfully.',
+    request: result.rows[0]
+  });
+});
+
+module.exports = { getAllRequests, getDashboardSummary, getResidentsList, getReportsSummary, updateRequestStatus, updateRequestPayment, updateRequestReleaseProof };
